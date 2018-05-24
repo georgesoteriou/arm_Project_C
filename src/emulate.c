@@ -3,16 +3,11 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "Branch.h"
-
-struct ARM {
-  int32_t registers[17];
-  int32_t memory[2048];
-};
+#include "global.h"
 
 int main(int argc, char **argv) {
 
   //initialise ARM to 0
-  struct ARM arm;
   for(int i = 0; i < 17; i++){
       arm.registers[i] = 0;
   }
