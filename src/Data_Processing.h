@@ -1,1 +1,1 @@
-int dataProcessing();
+void dataProcessing();
