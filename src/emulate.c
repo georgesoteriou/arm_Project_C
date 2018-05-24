@@ -2,10 +2,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "Data_Processing.h"
-#include "Multiply.h"
 #include "Single_Data_Transfer.h"
-#include "Branch.h"
 
 struct ARM {
   int32_t registers[17];
