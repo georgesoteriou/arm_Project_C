@@ -2,17 +2,12 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "Multiply.h"
-
-struct ARM {
-  int32_t registers[17];
-  int32_t memory[2048];
-};
+#include "Branch.h"
+#include "global.h"
 
 int main(int argc, char **argv) {
 
   //initialise ARM to 0
-  struct ARM arm;
   for(int i = 0; i < 17; i++){
       arm.registers[i] = 0;
   }
@@ -56,11 +51,11 @@ int main(int argc, char **argv) {
     int b25 = (1 << 25) & command;
     int b4  = (1 << 4)  & command;
 
-    if(b27 == 1) {
+    if(b27 != 0) {
       //Branch
-    } else if(b26 == 1) {
+    } else if(b26 != 0) {
       //Single Data Transfer
-    } else if(b25 == 0 && b4 == 1) {
+    } else if(b25 == 0 && b4 != 0) {
       //Multiply
     } else {
       //Data Processing
