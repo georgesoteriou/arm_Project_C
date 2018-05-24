@@ -51,11 +51,11 @@ int main(int argc, char **argv) {
     int b25 = (1 << 25) & command;
     int b4  = (1 << 4)  & command;
 
-    if(b27 == 1) {
+    if(b27 != 0) {
       //Branch
-    } else if(b26 == 1) {
+    } else if(b26 != 0) {
       //Single Data Transfer
-    } else if(b25 == 0 && b4 == 1) {
+    } else if(b25 == 0 && b4 != 0) {
       //Multiply
     } else {
       //Data Processing
