@@ -32,7 +32,7 @@ int decode_fn(int command) {
     } else if(command == 0) {
       return -1;
     } else {
-      return 0;
+      return 1;
     }
 }
 
