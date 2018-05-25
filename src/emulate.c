@@ -60,7 +60,7 @@ static cond cond_table[15];
 //-------------------DECODE FUNCTION------------------
 int decode_fn(int32_t command) {
     if(command == 0) return -2;
-
+    executeCommand = command;
     int32_t b27 = (1 << 27) & command;
     int32_t b26 = (1 << 26) & command;
     int32_t b25 = (1 << 25) & command;
@@ -91,8 +91,8 @@ int decode_fn(int32_t command) {
       } else {
         return 0;
       }
-    } else{
-      return 1;
+    }else{
+      return -1;
     }
 }
 
