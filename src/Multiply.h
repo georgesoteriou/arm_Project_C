@@ -1,1 +1,1 @@
- 
+void multiply();

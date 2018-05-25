@@ -1,11 +1,11 @@
-#include "Single_Data_Transfer.h"_
+#include "Single_Data_Transfer.h"
 #include "global.h"
 #include<stdio.h>
 #include<stdint.h>
 
-void single_data_transfer(){
+void singleDataTransfer(){
 
-int32_t instruction = arm.memory[register[15]];
+int32_t instruction = arm.memory[arm.registers[15]];
 
 int32_t offset        = instruction && (1<<12 - 1);
 int32_t offset_flag   = instruction && (1<<25);

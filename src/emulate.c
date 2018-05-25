@@ -13,7 +13,7 @@ typedef int (*execution)(void);
 static execution ex_table[4] = {
   dataProcessing,
   multiply,
-  single_data_transfer,
+  singleDataTransfer,
   branch
 };
 
