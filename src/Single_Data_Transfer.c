@@ -17,25 +17,35 @@ instruction>>12;
 int32_t dest_register = instruction && (1<<4 - 1);
 //shift right by  4 positions so I can get Rn
 int32_t base_register = instruction>>4;
+int32_t PC = 15;
 
 if(offset_flag){ 
     //if the immediate offset flag is set
     //get the Rm between bits 0 and 3
-    int32_t Rm = offset && (1<<4 - 1);
+    int32_t Rm = arm.registers[offset & (1<<4 - 1)];
+    int32_t shift_type;
+    int32_t shift_amount;
     //shift the offset right 4 times so I can use the "Shift" part of the offset
-    offset>>4;
+    offset = offset>>4;
     if(offset && 1 == 0){
        //if the bit 4 is 0, it means that the offset is shifted by a constant amount
-       offset>>1;
-       int32_t shift_type = offset && (1<<3 - 1);
+       offset = offset>>1;
+       shift_type = offset & (1<<3 - 1);
        //shift right by 2 positions so we get in offset the shift constant
-       offset>>2;
+       shift_amount = offset>>2;
     } else {
        //if the bit 4 is 1, it means the shift is specified by a register
-        offset>>1;
-        int32_t shift_type = offset && (1<<3 - 1);
-        //shift once more to get rid of the 0 and have only the shift register in offset
-        offset>>1;
+        offset = offset>>1;
+        shift_type = offset & (1<<3 - 1);
+        //shift once more to get rid of the 0 and have only the address to the shift register
+        int32_t Rs = arm.register[offset>>3];
+        //took the last byte of the Rs register
+        shift_amount = Rs & (1<<9 - 1);
+    }
+    if(shift_amount){
+        
+       o 
+
     }
      
 }
