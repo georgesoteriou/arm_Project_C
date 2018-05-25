@@ -137,17 +137,17 @@ int main(int argc, char **argv) {
   int *pc = &arm.registers[15];
   //cycle 0
   int execute = -1;
-  int32_t decode = 0;
-  int32_t fetch = arm.memory[(*pc)];
+  decodeCommand = 0;
+  fetchCommand = arm.memory[(*pc)];
   //cycle 1
-  decode = fetch;
-  fetch = arm.memory[++(*pc)];
+  decodeCommand = fetchCommand;
+  fetchCommand = arm.memory[++(*pc)];
   //main fetch decode execute function
   while(execute != -2) {
     execute_fn(execute);
-    execute = decode_fn(decode);
-    decode = fetch;
-    fetch = arm.memory[++(*pc)];
+    execute = decode_fn(decodeCommand);
+    decodeCommand = fetchCommand;
+    fetchCommand = arm.memory[++(*pc)];
   }
   //end of loop output
   printf("DONE");

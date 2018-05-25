@@ -5,6 +5,8 @@ struct ARM {
     int32_t memory[16384];
 }arm;
 
+int32_t fetchCommand;
+int32_t decodeCommand;
 int32_t executeCommand;
 
 void calculateShiftedOperand(int32_t*);
