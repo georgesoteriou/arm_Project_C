@@ -3,18 +3,53 @@
 #include<stdio.h>
 #include<stdint.h>
 
+void chooseShift(int32_t shiftType, int32_t* shiftee){
+    switch(shiftType){
+        case 0: lsl(shiftee);
+                break;
+        case 1: lsr(shiftee);
+                break;
+        case 2: asr(shiftee);
+                break;
+        case 3: ror(shiftee);
+                break;
+    }
+}
+
+void lsl(int32_t* shiftee){
+    return (*shiftee)<<1;
+}
+void lsr(int32_t* shiftee){
+    return (*shiftee)>>1;
+}
+void asr(int32_t* shiftee){
+    int32_t first_bit = (*shiftee) & (1<<32);
+    return ((*shiftee)>>1) | first_bit;
+}
+void ror(int32_t* shiftee){
+    int32_t last_bit = (*shiftee) & 1;
+    return (*shiftee>>1) | (last_bit<<32);
+}
+
+void apply_shift(int32_t shift_amount, int32_t shift_type, int32_t* shiftee){
+    while(shift_amount){
+        chooseShift(shift_type, shiftee);
+        shift_amount--;
+    }
+}
+
 void singleDataTransfer(){
 
 int32_t instruction = arm.memory[arm.registers[15]];
 
-int32_t offset        = instruction && (1<<12 - 1);
-int32_t offset_flag   = instruction && (1<<25);
-int32_t indexing_flag = instruction && (1<<24);
-int32_t up_bit_flag   = instruction && (1<<23);
-int32_t load_flag     = instruction && (1<<20);
+int32_t offset        = instruction & (1<<12 - 1);
+int32_t offset_flag   = instruction & (1<<25);
+int32_t indexing_flag = instruction & (1<<24);
+int32_t up_bit_flag   = instruction & (1<<23);
+int32_t load_flag     = instruction & (1<<20);
 //shift right by 12 positions so I can get Rd
 instruction>>12; 
-int32_t dest_register = instruction && (1<<4 - 1);
+int32_t dest_register = instruction & (1<<4 - 1);
 //shift right by  4 positions so I can get Rn
 int32_t base_register = instruction>>4;
 int32_t PC = 15;
@@ -27,7 +62,7 @@ if(offset_flag){
     int32_t shift_amount;
     //shift the offset right 4 times so I can use the "Shift" part of the offset
     offset = offset>>4;
-    if(offset && 1 == 0){
+    if(offset & 1 == 0){
        //if the bit 4 is 0, it means that the offset is shifted by a constant amount
        offset = offset>>1;
        shift_type = offset & (1<<3 - 1);
@@ -43,11 +78,10 @@ if(offset_flag){
         shift_amount = Rs & (1<<9 - 1);
     }
     if(shift_amount){
-        
-       o 
-
+        applyShift(shift_amount, shift_type, &Rm);
     }
-     
+} else {
+    
 }
 
 

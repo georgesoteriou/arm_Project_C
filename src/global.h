@@ -5,5 +5,7 @@ struct ARM {
     int32_t memory[2048];
 }arm;
 
-void calculateShiftedRegister(int32_t*);
+void calculateShiftedOperand(int32_t*);
+
+void calculateImmediateOperand(int32_t*);
 
