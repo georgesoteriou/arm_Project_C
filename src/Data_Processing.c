@@ -47,7 +47,7 @@ void and (int a, int b, int s, int* rd) {
   int32_t result = a & b;
 
   if(s != 0) {
-    flagsvzn(result);
+    flagsVZN(result);
   }
 
   *rd = result;
@@ -57,7 +57,7 @@ void tst (int a, int b, int s, int* rd) {
   int32_t result = a & b;
 
   if(s != 0) {
-    flagsvzn(result);
+    flagsVZN(result);
   }
 
 }
@@ -88,8 +88,10 @@ void add(int a, int b, int s, int* rd) {
       }
      }
 
-    flags()
+    flagsVZN(result);
   }
+
+  *rd = result;
 }
 
 void or(int a, int b, int s, int* rd) {
@@ -121,7 +123,7 @@ void dataProcessing() {
   op_table[12] = or;
   op_table[13] = mov;
 
-  int32_t instr = arm.memory[arm.registers[15]];
+  int32_t instr = executeCommand;
   int bitI = (1 << 25) & instr;
   int bitS = (1 << 20) & instr;
   int opcode = (instr >> 21) & ((1 << 4) - 1); 
