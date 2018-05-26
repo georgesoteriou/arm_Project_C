@@ -9,8 +9,8 @@ int32_t fetchCommand;
 int32_t decodeCommand;
 int32_t executeCommand;
 
-void calculateShiftedOperand(int32_t*);
+void calculateShiftedOperand(int32_t*, int32_t);
 
-void calculateImmediateOperand(int32_t*);
+void calculateImmediateOperand(int32_t*, int32_t);
 
 void flagsZN(int32_t);
