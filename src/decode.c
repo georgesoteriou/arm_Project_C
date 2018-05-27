@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "global.h"
 #include "decode.h"
 
 //------------COND FUNCTIONS-------------
