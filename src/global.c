@@ -3,12 +3,13 @@
 
 int32_t endianConversion(int32_t command) {
   int32_t mask = (1 << 8) - 1;
-  int32_t result = 0;
-  for(int i = 0; i < 4; i++) {
-    result += (command & mask);
-    result = (result << 8);
+  int32_t result = (command & mask);
+  for(int i = 0; i < 3; i++) {
+    result <<= 8;
     command >>= 8;
+    result += (command & mask);
   }
+
   return result;
 }
 

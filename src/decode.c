@@ -40,9 +40,9 @@ int decode_fn(int32_t command) {
     int32_t b25 = (1 << 25) & command;
     int32_t b4  = (1 << 7)  & command;
     int32_t b7  = (1 << 4)  & command;
-    int32_t n   = (1 << 31) & arm.registers[16];
-    int32_t z   = (1 << 30) & arm.registers[16];
-    int32_t v   = (1 << 28) & arm.registers[16];
+    int32_t n   = ((1 << 31) & arm.registers[16]) >> 31;
+    int32_t z   = ((1 << 30) & arm.registers[16]) >> 30;
+    int32_t v   = ((1 << 28) & arm.registers[16]) >> 28;
 
     //cond table init
     cond_table[0]  = eq;

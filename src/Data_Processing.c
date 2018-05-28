@@ -3,9 +3,9 @@
 #include <stdint.h>
 #include <limits.h>
 
-typedef void (*operation)(int, int, int, int*);
+typedef void (*operation)(int, int, int, int);
 
-void eor (int a, int b, int s, int* rd) {
+void eor (int a, int b, int s, int rd) {
   int32_t result =  a ^ b;
  
   
@@ -14,11 +14,11 @@ void eor (int a, int b, int s, int* rd) {
   }
 
   // V bit not affected
-  *rd = result;
+  arm.registers[rd] = result;
 
 }
 
-void teq (int a, int b, int s, int* rd) {
+void teq (int a, int b, int s, int rd) {
   int32_t result = a ^ b;
   
   if(s != 0) {
@@ -27,17 +27,17 @@ void teq (int a, int b, int s, int* rd) {
 }
 
 
-void and (int a, int b, int s, int* rd) {
+void and (int a, int b, int s, int rd) {
   int32_t result = a & b;
 
   if(s != 0) {
     flagsZN(result);
   }
 
-  *rd = result;
+  arm.registers[rd] = result;
 }
 
-void tst (int a, int b, int s, int* rd) {
+void tst (int a, int b, int s, int rd) {
   int32_t result = a & b;
 
   if(s != 0) {
@@ -46,7 +46,7 @@ void tst (int a, int b, int s, int* rd) {
 
 }
 
-void sub (int a, int b, int s, int* rd) {
+void sub (int a, int b, int s, int rd) {
   
   int32_t result = a - b;
 
@@ -64,10 +64,10 @@ void sub (int a, int b, int s, int* rd) {
     flagsZN(result);
   }
 
-  *rd = result;
+  arm.registers[rd] = result;
 }
 
-void cmp(int a, int b, int s, int* rd) {
+void cmp(int a, int b, int s, int rd) {
   int32_t result = a - b;
 
   if(s != 0) {
@@ -85,7 +85,7 @@ void cmp(int a, int b, int s, int* rd) {
   }
 }
 
-void rsb (int a, int b, int s, int* rd) {
+void rsb (int a, int b, int s, int rd) {
   int32_t result = b - a;
 
   if(s != 0) {
@@ -102,10 +102,10 @@ void rsb (int a, int b, int s, int* rd) {
     flagsZN(result);
   }
 
-  *rd = result;
+  arm.registers[rd] = result;
 }
 
-void add(int a, int b, int s, int* rd) {
+void add(int a, int b, int s, int rd) {
   int32_t result = a + b;
   
   if(s != 0) {
@@ -122,21 +122,21 @@ void add(int a, int b, int s, int* rd) {
     flagsZN(result);
   }
 
-  *rd = result;
+  arm.registers[rd] = result;
 }
 
-void orr(int a, int b, int s, int* rd) {
+void orr(int a, int b, int s, int rd) {
   int32_t result = a | b;
 
   if(s != 0) {
     flagsZN(result);
   }
 
-  *rd = result;
+  arm.registers[rd] = result;
 }
 
-void mov(int a, int b, int s, int* rd) {
-  *rd = b;
+void mov(int a, int b, int s, int rd) {
+  arm.registers[rd] = b;
 }
 
 
@@ -158,8 +158,8 @@ void dataProcessing() {
   int bitI = (1 << 25) & instr;
   int bitS = (1 << 20) & instr;
   int opcode = (instr >> 21) & ((1 << 4) - 1); 
-  int *rd = &arm.memory[(instr >> 12) & ((1 << 4) - 1)];
-  int rn = arm.memory[(instr >> 16) & ((1 << 4) - 1)];
+  int rd = (instr >> 12) & ((1 << 4) - 1);
+  int rn = arm.registers[(instr >> 16) & ((1 << 4) - 1)];
 
   int32_t operand = ((1 << 12) - 1 ) & instr;
   
