@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 
   for(int i = 0; i < 17; i++) {
     if(i == 15) {
-      printf("PC  :% 11i (0x%08x)", 4 * arm.registers[i], arm.registers[i]);
+      printf("PC  :% 11i (0x%08x)", 4 * arm.registers[i], 4 * arm.registers[i]);
       printf("\n");
       
     } else if(i == 16) {
