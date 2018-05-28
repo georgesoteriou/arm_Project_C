@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "global.h"
 
-int32_t endianConversion(int32_t command) {
+int32_t endianConversion(uint32_t command) {
   int32_t mask = (1 << 8) - 1;
   int32_t result = (command & mask);
   for(int i = 0; i < 3; i++) {

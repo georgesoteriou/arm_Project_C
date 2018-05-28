@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-int32_t endianConversion(int32_t);
+int32_t endianConversion(uint32_t);
 
 struct ARM {
     int32_t registers[17];

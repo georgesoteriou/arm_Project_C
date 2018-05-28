@@ -38,9 +38,7 @@ int main(int argc, char **argv) {
       arm.memory[counter] <<= 8;
       arm.memory[counter] += fgetc(code);
     }
-    printf("%0x ", arm.memory[counter]);
     arm.memory[counter] = endianConversion(arm.memory[counter]);
-    printf("%0x\n", arm.memory[counter]);
     counter++;
   }
 
