@@ -3,89 +3,72 @@
 #include<stdio.h>
 #include<stdint.h>
 
-void chooseShift(int32_t shiftType, int32_t* shiftee){
-    switch(shiftType){
-        case 0: lsl(shiftee);
-                break;
-        case 1: lsr(shiftee);
-                break;
-        case 2: asr(shiftee);
-                break;
-        case 3: ror(shiftee);
-                break;
+void loadData(int32_t src, int32_t dest){
+    arm.registers[dest] = arm.memory[src];
+}
+
+void writeData(int32_t src, int32_t dest){
+    arm.memory[dest] = arm.registers[src];
+}
+
+void transferData(int32_t src, int32_t dest, int32_t load_flag){
+    if(load_flag){
+        /*if the flag is set to load, then load the data from the source
+        (memory) to the destination register*/
+        loadData(src, dest);
+    } else{
+        /* if the flag is set to write, then switch the parameters for write
+        - write from Rd to memory, so dest -> src */
+    writeData(dest, src);
     }
 }
 
-void lsl(int32_t* shiftee){
-    return (*shiftee)<<1;
-}
-void lsr(int32_t* shiftee){
-    return (*shiftee)>>1;
-}
-void asr(int32_t* shiftee){
-    int32_t first_bit = (*shiftee) & (1<<32);
-    return ((*shiftee)>>1) | first_bit;
-}
-void ror(int32_t* shiftee){
-    int32_t last_bit = (*shiftee) & 1;
-    return (*shiftee>>1) | (last_bit<<32);
-}
-
-void apply_shift(int32_t shift_amount, int32_t shift_type, int32_t* shiftee){
-    while(shift_amount){
-        chooseShift(shift_type, shiftee);
-        shift_amount--;
-    }
+int32_t calculate_address(int32_t addr, int32_t add_flag, int32_t offset){
+    if(add_flag){
+        return addr + offset;
+    } 
+    return addr - offset;
 }
 
 void singleDataTransfer(){
 
-int32_t instruction = arm.memory[arm.registers[15]];
+int32_t instruction = executeCommand;
 
 int32_t offset        = instruction & (1<<12 - 1);
-int32_t offset_flag   = instruction & (1<<25);
-int32_t indexing_flag = instruction & (1<<24);
+int32_t immediate_flag   = instruction & (1<<25);
+int32_t preindexing_flag = instruction & (1<<24);
 int32_t up_bit_flag   = instruction & (1<<23);
 int32_t load_flag     = instruction & (1<<20);
-//shift right by 12 positions so I can get Rd
+//shift right by 12 positions so I can get the address to Rn
 instruction>>12; 
-int32_t dest_register = instruction & (1<<4 - 1);
-//shift right by  4 positions so I can get Rn
-int32_t base_register = instruction>>4;
-int32_t PC = 15;
+int32_t Rd = instruction & (1<<4 - 1);
+//shift right by  4 positions so I can get the address to Rn
+int32_t Rn = instruction>>4 & (1<<4 - 1);
+int32_t *Rn_address = &arm.registers[Rn];
+//int32_t *Rd_address = &arm.registers[Rd];
+int32_t base_reg_value = arm.registers[Rn];
 
-if(offset_flag){ 
-    //if the immediate offset flag is set
-    //get the Rm between bits 0 and 3
-    int32_t Rm = arm.registers[offset & (1<<4 - 1)];
-    int32_t shift_type;
-    int32_t shift_amount;
-    //shift the offset right 4 times so I can use the "Shift" part of the offset
-    offset = offset>>4;
-    if(offset & 1 == 0){
-       //if the bit 4 is 0, it means that the offset is shifted by a constant amount
-       offset = offset>>1;
-       shift_type = offset & (1<<3 - 1);
-       //shift right by 2 positions so we get in offset the shift constant
-       shift_amount = offset>>2;
-    } else {
-       //if the bit 4 is 1, it means the shift is specified by a register
-        offset = offset>>1;
-        shift_type = offset & (1<<3 - 1);
-        //shift once more to get rid of the 0 and have only the address to the shift register
-        int32_t Rs = arm.register[offset>>3];
-        //took the last byte of the Rs register
-        shift_amount = Rs & (1<<9 - 1);
-    }
-    if(shift_amount){
-        applyShift(shift_amount, shift_type, &Rm);
-    }
+if(immediate_flag){ 
+    calculateShiftedOperand(&offset, 0);    
 } else {
-    
+    calculateImmediateOperand(&offset, 0);
 }
 
 
+if(preindexing_flag){
+    base_reg_value = calculate_address(base_reg_value, up_bit_flag, offset);
+    transferData(base_reg_value, Rd, up_bit_flag);
+} else {
+    //assert(Rd != Rn);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    transferData(base_reg_value, Rd, up_bit_flag);
+    (*Rn_address) = calculate_address(base_reg_value, up_bit_flag, offset);
 }
+}
+
+
+
+
+
 
 
 
