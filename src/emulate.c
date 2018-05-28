@@ -6,6 +6,19 @@
 #include "execute.h"
 #include "decode.h"
 
+void printBinary(int32_t x){
+  int32_t mask =1 << 31;
+  for(int i=0; i<32;i++) {
+    if((x & mask) == 0 ) {
+      printf("0");
+    }  else {
+       printf("1");
+    }
+    x = x << 1; //x <<=1;
+  }
+  printf("\n");
+}
+
 int main(int argc, char **argv) {
   //initialise ARM to 0
   for(int i = 0; i < 17; i++){
@@ -58,7 +71,27 @@ int main(int argc, char **argv) {
     fetchCommand = arm.memory[++(*pc)];
   }
   //end of loop output
-  printf("DONE");
+  printf("Registers:\n");
+
+  for(int i = 0; i < 17; i++) {
+    if(i == 15) {
+      printf("PC %i (%0x)", arm.registers[i], arm.registers[i]);
+    } else if(i == 16) {
+      printf("CPSR %i (%0x)", arm.registers[i], arm.registers[i]);
+    } else if(i != 13 && i != 14) {
+      printf("$%i %i (%0x)", i, arm.registers[i], arm.registers[i]);
+    }
+
+    printf("\n");
+  }
+
+  printf("Non-zero memory:\n");
+
+  for(int i = 0; i < 16384; i++) {
+    if(arm.memory[i] != 0) {
+      printf("%0x: %0x\n", i * 4, arm.memory[i]);
+    }
+  }
 
   return EXIT_SUCCESS;
 }
