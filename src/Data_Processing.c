@@ -56,7 +56,7 @@ void sub (int a, int b, int s, int* rd) {
     } else {
      //C bit needs to be 0
      //if C bit is already one we need to clear it
-       if((arm.registers[16] & (1 << 29)) == 1) {
+       if((arm.registers[16] & (1 << 29)) != 0) {
          arm.registers[16] -= (1 << 29);
        }
     }
@@ -76,7 +76,7 @@ void cmp(int a, int b, int s, int* rd) {
     } else {
      //C bit needs to be 0
      //if C bit is already one we need to clear it
-       if((arm.registers[16] & (1 << 29)) == 1) {
+       if((arm.registers[16] & (1 << 29)) != 0) {
          arm.registers[16] -= (1 << 29);
        }
     }
@@ -94,7 +94,7 @@ void rsb (int a, int b, int s, int* rd) {
     } else {
      //C bit needs to be 0
      //if C bit is already one we need to clear it
-       if((arm.registers[16] & (1 << 29)) == 1) {
+       if((arm.registers[16] & (1 << 29)) != 0) {
          arm.registers[16] -= (1 << 29);
        }
     }
@@ -114,7 +114,7 @@ void add(int a, int b, int s, int* rd) {
      } else {
        //if C bit needs to be 0
        //if C bit is already one we need to clear it
-       if((arm.registers[16] & (1 << 29)) == 1) {
+       if((arm.registers[16] & (1 << 29)) != 0) {
          arm.registers[16] -= (1<<29);
       }
      }
@@ -160,7 +160,6 @@ void dataProcessing() {
   int opcode = (instr >> 21) & ((1 << 4) - 1); 
   int *rd = &arm.memory[(instr >> 12) & ((1 << 4) - 1)];
   int rn = arm.memory[(instr >> 16) & (1 << 4) - 1];
-  int *cpsr = &arm.registers[16];
 
   int32_t operand = ((1 << 12) - 1 ) & instr;
   
