@@ -165,7 +165,7 @@ void dataProcessing() {
   
   if(bitI != 0) {
     // operand2 is a rotated immediate
-    calculateImmediateOperand(&operand, bitS);  
+    operand = calculateImmediateOperand(operand);  
   } else {
     // operand2 is register
     calculateShiftedOperand(&operand, bitS);

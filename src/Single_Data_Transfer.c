@@ -51,7 +51,7 @@ int32_t base_reg_value = arm.registers[Rn];
 if(immediate_flag){ 
     calculateShiftedOperand(&offset, 0);    
 } else {
-    calculateImmediateOperand(&offset, 0);
+    offset = calculateImmediateOperand(offset);
 }
 
 
