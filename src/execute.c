@@ -7,7 +7,7 @@
 
 //------------EXECUTE FUNCTIONS-------------
 //function to execute correct command
-typedef int (*execution)(void);
+typedef void (*execution)(void);
 
 //execution function table
 static execution ex_table[4] = {

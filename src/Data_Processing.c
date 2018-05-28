@@ -1,7 +1,7 @@
 #include "Data_Processing.h"
 #include "global.h"
-#include<stdint.h>
-#include<limits.h>
+#include <stdint.h>
+#include <limits.h>
 
 typedef void (*operation)(int, int, int, int*);
 
@@ -159,7 +159,7 @@ void dataProcessing() {
   int bitS = (1 << 20) & instr;
   int opcode = (instr >> 21) & ((1 << 4) - 1); 
   int *rd = &arm.memory[(instr >> 12) & ((1 << 4) - 1)];
-  int rn = arm.memory[(instr >> 16) & (1 << 4) - 1];
+  int rn = arm.memory[(instr >> 16) & ((1 << 4) - 1)];
 
   int32_t operand = ((1 << 12) - 1 ) & instr;
   
