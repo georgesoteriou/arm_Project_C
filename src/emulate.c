@@ -63,14 +63,14 @@ int main(int argc, char **argv) {
 
   for(int i = 0; i < 17; i++) {
     if(i == 15) {
-      printf("PC %i (%0x)", 4 * arm.registers[i], arm.registers[i]);
+      printf("PC  :% 11i (%08x)", 4 * arm.registers[i], arm.registers[i]);
       printf("\n");
       
     } else if(i == 16) {
-      printf("CPSR %i (%0x)", arm.registers[i], arm.registers[i]);
+      printf("CPSR:% 11i (%08x)", arm.registers[i], arm.registers[i]);
       printf("\n");
     } else if(i != 13 && i != 14) {
-      printf("$%i %i (%0x)", i, arm.registers[i], arm.registers[i]);
+      printf("$%-3i:% 11i (%08x)", i, arm.registers[i], arm.registers[i]);
       printf("\n");
     }
   }
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 
   for(int i = 0; i < 16384; i++) {
     if(arm.memory[i] != 0) {
-      printf("%0x: %0x\n", i * 4, endianConversion(arm.memory[i]));
+      printf("0x%08x: 0x%08x\n", i * 4, endianConversion(arm.memory[i]));
     }
   }
 
