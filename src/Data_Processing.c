@@ -154,7 +154,7 @@ void dataProcessing() {
   op_table[12] = orr;
   op_table[13] = mov;
 
-  int32_t instr = executeCommand;
+  uint32_t instr = executeCommand;
   int bitI = (1 << 25) & instr;
   int bitS = (1 << 20) & instr;
   int opcode = (instr >> 21) & ((1 << 4) - 1); 

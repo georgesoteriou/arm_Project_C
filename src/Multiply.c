@@ -4,7 +4,7 @@
 
 void multiply() {
   //memory[registers[15]] = instructiunea mea
-  int32_t command = executeCommand;
+  uint32_t command = executeCommand;
   int32_t bitA = (1 << 21) & command;
   int32_t bitS = (1 << 20) & command;
   int32_t *rd = &arm.registers[(command >> 16) & ((1 << 4) - 1)];

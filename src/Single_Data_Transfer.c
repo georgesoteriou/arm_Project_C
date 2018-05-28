@@ -32,7 +32,7 @@ int32_t calculate_address(int32_t addr, int32_t add_flag, int32_t offset){
 
 void singleDataTransfer(){
 
-int32_t instruction = executeCommand;
+uint32_t instruction = executeCommand;
 
 int32_t offset        = instruction & ((1 << 12) - 1);
 int32_t immediate_flag   = instruction & (1<<25);
