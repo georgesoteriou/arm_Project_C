@@ -33,7 +33,7 @@ static cond cond_table[15];
 
 
 //-------------------DECODE FUNCTION------------------
-int decode_fn(int32_t command) {
+int decode_fn(uint32_t command) {
     if(command == 0) return -2;
     executeCommand = command;
     int32_t b27 = (1 << 27) & command;
@@ -54,8 +54,8 @@ int decode_fn(int32_t command) {
     cond_table[13] = le;
     cond_table[14] = al;
 
-    int cond = (((((1 << 4) - 1) << 28) & command) >> 28);
-    int flag = cond_table[cond](n,z,v);
+    uint32_t cond = (((((1 << 4) - 1) << 28) & command) >> 28);
+    uint32_t flag = cond_table[cond](n,z,v);
     if(flag){
       if(b27 != 0) {
         return 3; 

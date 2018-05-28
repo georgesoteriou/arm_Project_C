@@ -1,2 +1,2 @@
-int decode_fn(int32_t);
+int decode_fn(uint32_t);
 
