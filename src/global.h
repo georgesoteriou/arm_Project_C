@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+int32_t endianConversion(int32_t);
+
 struct ARM {
     int32_t registers[17];
     int32_t memory[16384];

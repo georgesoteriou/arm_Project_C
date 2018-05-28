@@ -1,6 +1,17 @@
 #include <stdint.h>
 #include "global.h"
 
+int32_t endianConversion(int32_t command) {
+  int32_t mask = (1 << 8) - 1;
+  int32_t result = 0;
+  for(int i = 0; i < 4; i++) {
+    result += (command & mask);
+    result = (result << 8);
+    command >>= 8;
+  }
+  return result;
+}
+
 void lsl(int32_t* shiftee, int32_t S_flag){
     if(S_flag != 0){
         int32_t Cbit = (*shiftee) & (1 << 31);
