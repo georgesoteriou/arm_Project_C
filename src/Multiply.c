@@ -7,7 +7,7 @@ void multiply() {
   uint32_t command = executeCommand;
   int32_t bitA = (1 << 21) & command;
   int32_t bitS = (1 << 20) & command;
-  int32_t *rd = &arm.registers[(command >> 16) & ((1 << 4) - 1)];
+  uint32_t *rd = &arm.registers[(command >> 16) & ((1 << 4) - 1)];
   int32_t rs = arm.registers[(command >> 8) & ((1 << 4) - 1)];
   int32_t rm = arm.registers[command & ((1 << 4) - 1)];
   int32_t result;

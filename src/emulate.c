@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
   }
 
   //fetch command at 0
-  int *pc = &arm.registers[15];
+  uint32_t *pc = &arm.registers[15];
   //cycle 0
   int execute = -1;
   decodeCommand = 0;

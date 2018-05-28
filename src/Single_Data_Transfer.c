@@ -44,7 +44,7 @@ instruction >>= 12;
 int32_t Rd = instruction & ((1 << 4) - 1);
 //shift right by  4 positions so I can get the address to Rn
 int32_t Rn = (instruction >> 4) & ((1 << 4) - 1);
-int32_t *Rn_address = &arm.registers[Rn];
+uint32_t *Rn_address = &arm.registers[Rn];
 //int32_t *Rd_address = &arm.registers[Rd];
 int32_t base_reg_value = arm.registers[Rn];
 

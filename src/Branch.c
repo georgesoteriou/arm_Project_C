@@ -3,7 +3,7 @@
 #include "global.h"
 
 void branch(){
-    int32_t *pc = &arm.registers[15]; 
+    uint32_t *pc = &arm.registers[15]; 
     int32_t offset = ((1 << 24) - 1) & executeCommand;
     //Apply offset
     (*pc) += (offset<<2);
