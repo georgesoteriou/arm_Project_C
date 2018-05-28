@@ -53,7 +53,7 @@ int decode_fn(int32_t command) {
     cond_table[13] = le;
     cond_table[14] = al;
 
-    int cond = (0b1111 << 28) & command;
+    int cond = (((1 << 4) - 1) << 28) & command;
     int flag = cond_table[cond](n,z,v);
     if(flag){
       if(b27 != 0) {

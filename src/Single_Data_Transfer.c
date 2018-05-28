@@ -34,16 +34,16 @@ void singleDataTransfer(){
 
 int32_t instruction = executeCommand;
 
-int32_t offset        = instruction & (1<<12 - 1);
+int32_t offset        = instruction & ((1 << 12) - 1);
 int32_t immediate_flag   = instruction & (1<<25);
 int32_t preindexing_flag = instruction & (1<<24);
 int32_t up_bit_flag   = instruction & (1<<23);
 int32_t load_flag     = instruction & (1<<20);
 //shift right by 12 positions so I can get the address to Rn
-instruction>>12; 
-int32_t Rd = instruction & (1<<4 - 1);
+instruction >>= 12; 
+int32_t Rd = instruction & ((1 << 4) - 1);
 //shift right by  4 positions so I can get the address to Rn
-int32_t Rn = instruction>>4 & (1<<4 - 1);
+int32_t Rn = (instruction >> 4) & ((1 << 4) - 1);
 int32_t *Rn_address = &arm.registers[Rn];
 //int32_t *Rd_address = &arm.registers[Rd];
 int32_t base_reg_value = arm.registers[Rn];
@@ -57,13 +57,14 @@ if(immediate_flag){
 
 if(preindexing_flag){
     base_reg_value = calculate_address(base_reg_value, up_bit_flag, offset);
-    transferData(base_reg_value, Rd, up_bit_flag);
+    transferData(base_reg_value, Rd, load_flag);
 } else {
     //assert(Rd != Rn);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    transferData(base_reg_value, Rd, up_bit_flag);
+    transferData(base_reg_value, Rd, load_flag);
     (*Rn_address) = calculate_address(base_reg_value, up_bit_flag, offset);
 }
 }
+
 
 
 
