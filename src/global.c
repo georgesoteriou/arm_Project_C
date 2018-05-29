@@ -162,9 +162,9 @@ uint32_t getOffsetWord(uint32_t address){
       uint32_t r = address % 4;
       uint32_t mem1 = arm.memory[q + 1]; 
       uint32_t mem2 = arm.memory[q];
-      uint32_t mask1 = ((1 << (8 * (4 - r))) - 1);
-      uint32_t mask2 = ((1 << (8 * r)) - 1) << (8 * (4 - r));
-      return ((mask2 & mem2) >> (8 * (4 - r))) + ((mask1 & mem1) << (8 * r));
+      uint32_t mask1 = ((1 << (8 * r)) - 1);
+      uint32_t mask2 = ((1 << (8 * (4 -r))) - 1) << (8 * r);
+      return ((mask2 & mem2) >> (8 * r)) + ((mask1 & mem1) << (8 * (4 - r)));
     }
 }
 
