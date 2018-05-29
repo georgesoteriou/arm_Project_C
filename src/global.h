@@ -15,4 +15,4 @@ void calculateShiftedOperand(uint32_t*, uint32_t);
 
 uint32_t calculateImmediateOperand(uint32_t);
 
-void flagsZN(uint32_t);
+void flagsZN(int32_t);

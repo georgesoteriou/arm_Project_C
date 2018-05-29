@@ -136,18 +136,19 @@ uint32_t calculateImmediateOperand(uint32_t operand){
 }
 
 
-void flagsZN(uint32_t result) {
-  //Z bit
-  if(result == 0) {
-    arm.registers[16] |= (1 << 30);
-   }
- 
-  //set N bit
- uint32_t rnbit = (1 << 31) & result;
- uint32_t nbit = (1 << 31) & arm.registers[16];
- if(rnbit == 0 && nbit != 0) {
-    arm.registers[16] -= (1 << 31);
-  } else { 
-    arm.registers[16] |= (1 << 31);
-  }
- }
+void flagsZN(int32_t result) {
+    //Z bit
+    if(result == 0) {
+        arm.registers[16] |= (1 << 30);
+    }
+    if(result < 0){
+        //set N bit
+        uint32_t rnbit = (1 << 31) & result;
+        uint32_t nbit = (1 << 31) & arm.registers[16];
+        if(rnbit == 0 && nbit != 0) {
+            arm.registers[16] -= (1 << 31);
+        } else { 
+            arm.registers[16] |= (1 << 31);
+        }
+    }
+}
