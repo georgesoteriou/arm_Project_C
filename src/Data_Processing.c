@@ -52,14 +52,14 @@ void sub (int a, int b, int s, int rd) {
 
   if(s != 0) {
     if(((b < 0) && (a > INT_MAX + b)) || ((b > 0) && (a < INT_MIN + b))) {
-     arm.registers[16] |= (1 << 29);
-    } else {
      //C bit needs to be 0
      //if C bit is already one we need to clear it
        if((arm.registers[16] & (1 << 29)) != 0) {
          arm.registers[16] -= (1 << 29);
-       }
+    } else {
+     arm.registers[16] |= (1 << 29);
     }
+  }
 
     flagsZN(result);
   }
@@ -72,13 +72,13 @@ void cmp(int a, int b, int s, int rd) {
 
   if(s != 0) {
     if(((b < 0) && (a > INT_MAX + b)) || ((b > 0) && (a < INT_MIN + b))) {
-     arm.registers[16] |= (1 << 29);
-    } else {
      //C bit needs to be 0
      //if C bit is already one we need to clear it
        if((arm.registers[16] & (1 << 29)) != 0) {
          arm.registers[16] -= (1 << 29);
        }
+    } else {
+     arm.registers[16] |= (1 << 29);
     }
 
     flagsZN(result);
@@ -90,13 +90,13 @@ void rsb (int a, int b, int s, int rd) {
 
   if(s != 0) {
     if(((a < 0) && (b > INT_MAX + a)) || ((a > 0) && (b < INT_MIN + a))) {
-     arm.registers[16] |= (1 << 29);
-    } else {
      //C bit needs to be 0
      //if C bit is already one we need to clear it
        if((arm.registers[16] & (1 << 29)) != 0) {
          arm.registers[16] -= (1 << 29);
        }
+    } else {
+     arm.registers[16] |= (1 << 29);
     }
 
     flagsZN(result);
