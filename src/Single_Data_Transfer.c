@@ -23,7 +23,7 @@ void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
       writeData(regAddr, memAddr);
     }
     } else {
-        fprintf("Error: Out of bounds memory access at address %0x", endianConversion(memAddr));
+        printf("Error: Out of bounds memory access at address %0x", endianConversion(memAddr));
     }
 }
 
@@ -55,7 +55,7 @@ uint32_t base_reg_value = arm.registers[Rn];
 if(immediate_flag != 0){ 
     calculateShiftedOperand(&offset, 0);    
 } else {
-    offset = calculateImmediateOperand(offset);
+    //offset = calculateImmediateOperand(offset);
 }
 
 
