@@ -23,7 +23,7 @@ void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
       writeData(regAddr, memAddr);
     }
     } else {
-        printf("Error: Out of bounds memory access at address %0x", endianConversion(memAddr));
+        printf("Error: Out of bounds memory access at address 0x%08x\n", memAddr);
     }
 }
 

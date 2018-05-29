@@ -156,7 +156,7 @@ void flagsZN(int32_t result) {
 
 uint32_t getOffsetWord(uint32_t address){
     if((address % 4) == 0) {
-      return arm.memory[address];
+      return arm.memory[address / 4];
     } else {
       uint32_t q = address / 4;
       uint32_t r = address % 4;
