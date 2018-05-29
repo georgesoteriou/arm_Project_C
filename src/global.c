@@ -13,6 +13,7 @@ uint32_t endianConversion(uint32_t command) {
   return result;
 }
 
+
 void lsl(uint32_t* shiftee, uint32_t S_flag){
     if(S_flag != 0){
         uint32_t Cbit = (*shiftee) & (1 << 31);
@@ -103,17 +104,17 @@ void calculateShiftedOperand(uint32_t* operandPointer, uint32_t S_flag){
     if((operand & 1) == 0){
        //if the bit 4 is 0, it means that the operand is shifted by a constant amount
        operand = operand>>1;
-       shift_type = operand & ((1 << 3) - 1);
+       shift_type = operand & ((1 << 2) - 1);
        //shift right by 2 positions so we get in operand the shift constant
        shift_amount = operand>>2;
     } else {
        //if the bit 4 is 1, it means the shift is specified by a register
         operand = operand>>1;
-        shift_type = operand & ((1 << 3) - 1);
+        shift_type = operand & ((1 << 2) - 1);
         //shift once more to get rid of the 0 and have only the address to the shift register
         uint32_t Rs = arm.registers[operand>>3];
         //took the last byte of the Rs register
-        shift_amount = Rs & ((1 << 9) - 1);
+        shift_amount = Rs & ((1 << 8) - 1);
     }
 
     if(shift_amount){
@@ -125,10 +126,10 @@ void calculateShiftedOperand(uint32_t* operandPointer, uint32_t S_flag){
 
 uint32_t calculateImmediateOperand(uint32_t operand){
     uint32_t imm = operand & ((1 << 8) - 1);
-    uint32_t rotate = (operand >> 8) << 2;
+    uint32_t rotate = (operand >> 8) << 1;
     while(rotate){
         //don't know if to set c flag !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        ror(&imm, 1);
+        ror(&imm, 0);
         rotate--;
     }
 
@@ -151,4 +152,22 @@ void flagsZN(int32_t result) {
             arm.registers[16] |= (1 << 31);
         }
     }
+}
+
+uint32_t getOffsetWord(uint32_t address){
+    if((address % 4) == 0) {
+      return arm.memory[address];
+    } else {
+      uint32_t q = address / 4;
+      uint32_t r = address % 4;
+      uint32_t mem1 = arm.memory[q + 1]; 
+      uint32_t mem2 = arm.memory[q];
+      uint32_t mask1 = ((1 << (8 * (4 - r))) - 1);
+      uint32_t mask2 = ((1 << (8 * r)) - 1) << (8 * (4 - r));
+      return ((mask2 & mem2) >> (8 * (4 - r))) + ((mask1 & mem1) << (8 * r));
+    }
+}
+
+int32_t isWithinBounds(int32_t memAddr){
+    return memAddr >= 0 && memAddr < 16384;
 }

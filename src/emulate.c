@@ -66,10 +66,14 @@ int main(int argc, char **argv) {
       printf("PC  : % 10i (0x%08x)", 4 * arm.registers[i], 4 * arm.registers[i]);
       printf("\n");      
     } else if(i == 16) {
-      printf("CPSR: % 10i (0x%08x)", arm.registers[i], arm.registers[i]);
+      if(((int32_t) arm.registers[i]) < 0) {
+        printf("CPSR: % 11i (0x%08x)", arm.registers[i], arm.registers[i]);
+      } else {
+        printf("CPSR:% 11i (0x%08x)", arm.registers[i], arm.registers[i]);
+      }
       printf("\n");
     } else if(i != 13 && i != 14) {
-      printf("$%-3i: % 10i (0x%08x)", i, arm.registers[i], arm.registers[i]);
+      printf("$%-3i:% 11d (0x%08x)", i, arm.registers[i], arm.registers[i]);
       printf("\n");
     }
   }

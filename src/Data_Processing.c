@@ -51,7 +51,8 @@ void sub (int a, int b, int s, int rd) {
   int32_t result = a - b;
 
   if(s != 0) {
-    if(((b < 0) && (a > INT_MAX + b)) || ((b > 0) && (a < INT_MIN + b))) {
+    //if(((b < 0) && (a > INT_MAX + b)) || ((b > 0) && (a < INT_MIN + b))) {
+     if(a < b) {
      //C bit needs to be 0
      //if C bit is already one we need to clear it
        if((arm.registers[16] & (1 << 29)) != 0) {
@@ -71,7 +72,8 @@ void cmp(int a, int b, int s, int rd) {
   int32_t result = a - b;
 
   if(s != 0) {
-    if(((b < 0) && (a > INT_MAX + b)) || ((b > 0) && (a < INT_MIN + b))) {
+  //  if(((b < 0) && (a > INT_MAX + b)) || ((b > 0) && (a < INT_MIN + b))) 
+    if(a < b){
      //C bit needs to be 0
      //if C bit is already one we need to clear it
        if((arm.registers[16] & (1 << 29)) != 0) {
@@ -89,7 +91,8 @@ void rsb (int a, int b, int s, int rd) {
   int32_t result = b - a;
 
   if(s != 0) {
-    if(((a < 0) && (b > INT_MAX + a)) || ((a > 0) && (b < INT_MIN + a))) {
+    if(b < a) {
+    //if(((a < 0) && (b > INT_MAX + a)) || ((a > 0) && (b < INT_MIN + a))) {
      //C bit needs to be 0
      //if C bit is already one we need to clear it
        if((arm.registers[16] & (1 << 29)) != 0) {
