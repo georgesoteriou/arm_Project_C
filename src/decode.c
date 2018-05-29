@@ -5,30 +5,30 @@
 
 //------------COND FUNCTIONS-------------
 //Functions to check cond
-int eq(int32_t n, int32_t z, int32_t v) {
+int eq(uint32_t n, uint32_t z, uint32_t v) {
   return ( (z != 0) ? 1 : 0 );
 }
-int ne(int32_t n, int32_t z, int32_t v) {
+int ne(uint32_t n, uint32_t z, uint32_t v) {
   return ( (z == 0) ? 1 : 0 );
 }
-int ge(int32_t n, int32_t z, int32_t v ) {
+int ge(uint32_t n, uint32_t z, uint32_t v ) {
   return ( (n == v) ? 1 : 0 );
 }
-int lt(int32_t n, int32_t z, int32_t v) {
+int lt(uint32_t n, uint32_t z, uint32_t v) {
   return ( (n != v) ? 1 : 0 );
 }
-int gt(int32_t n, int32_t z, int32_t v) {
+int gt(uint32_t n, uint32_t z, uint32_t v) {
   return (((z == 0) && (n == v)) ? 1 : 0 );
 }
-int le(int32_t n, int32_t z, int32_t v) {
+int le(uint32_t n, uint32_t z, uint32_t v) {
   return (((z != 0) || (n != v)) ? 1 : 0 );
 }
-int al(int32_t n, int32_t z, int32_t v) {
+int al(uint32_t n, uint32_t z, uint32_t v) {
   return 1;
 }
 
 //cond function table declared
-typedef int (*cond)(int32_t, int32_t, int32_t);
+typedef int (*cond)(uint32_t, uint32_t, uint32_t);
 static cond cond_table[15];
 
 
@@ -36,14 +36,14 @@ static cond cond_table[15];
 int decode_fn(uint32_t command) {
     if(command == 0) return -2;
     executeCommand = command;
-    int32_t b27 = (1 << 27) & command;
-    int32_t b26 = (1 << 26) & command;
-    int32_t b25 = (1 << 25) & command;
-    int32_t b4  = (1 << 7)  & command;
-    int32_t b7  = (1 << 4)  & command;
-    int32_t n   = ((1 << 31) & arm.registers[16]) >> 31;
-    int32_t z   = ((1 << 30) & arm.registers[16]) >> 30;
-    int32_t v   = ((1 << 28) & arm.registers[16]) >> 28;
+    uint32_t b27 = (1 << 27) & command;
+    uint32_t b26 = (1 << 26) & command;
+    uint32_t b25 = (1 << 25) & command;
+    uint32_t b4  = (1 << 7)  & command;
+    uint32_t b7  = (1 << 4)  & command;
+    uint32_t n   = ((1 << 31) & arm.registers[16]) >> 31;
+    uint32_t z   = ((1 << 30) & arm.registers[16]) >> 30;
+    uint32_t v   = ((1 << 28) & arm.registers[16]) >> 28;
 
     //cond table init
     cond_table[0]  = eq;

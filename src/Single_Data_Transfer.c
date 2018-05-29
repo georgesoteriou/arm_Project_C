@@ -3,15 +3,15 @@
 #include<stdio.h>
 #include<stdint.h>
 
-void loadData(int32_t src, int32_t dest){
+void loadData(uint32_t src, uint32_t dest){
     arm.registers[dest] = arm.memory[src];
 }
 
-void writeData(int32_t src, int32_t dest){
+void writeData(uint32_t src, uint32_t dest){
     arm.memory[dest] = arm.registers[src];
 }
 
-void transferData(int32_t src, int32_t dest, int32_t load_flag){
+void transferData(uint32_t src, uint32_t dest, uint32_t load_flag){
     if(load_flag){
         /*if the flag is set to load, then load the data from the source
         (memory) to the destination register*/
@@ -23,7 +23,7 @@ void transferData(int32_t src, int32_t dest, int32_t load_flag){
     }
 }
 
-int32_t calculate_address(int32_t addr, int32_t add_flag, int32_t offset){
+uint32_t calculate_address(uint32_t addr, uint32_t add_flag, uint32_t offset){
     if(add_flag){
         return addr + offset;
     } 
@@ -34,19 +34,19 @@ void singleDataTransfer(){
 
 uint32_t instruction = executeCommand;
 
-int32_t offset        = instruction & ((1 << 12) - 1);
-int32_t immediate_flag   = instruction & (1<<25);
-int32_t preindexing_flag = instruction & (1<<24);
-int32_t up_bit_flag   = instruction & (1<<23);
-int32_t load_flag     = instruction & (1<<20);
+uint32_t offset        = instruction & ((1 << 12) - 1);
+uint32_t immediate_flag   = instruction & (1<<25);
+uint32_t preindexing_flag = instruction & (1<<24);
+uint32_t up_bit_flag   = instruction & (1<<23);
+uint32_t load_flag     = instruction & (1<<20);
 //shift right by 12 positions so I can get the address to Rn
 instruction >>= 12; 
-int32_t Rd = instruction & ((1 << 4) - 1);
+uint32_t Rd = instruction & ((1 << 4) - 1);
 //shift right by  4 positions so I can get the address to Rn
-int32_t Rn = (instruction >> 4) & ((1 << 4) - 1);
+uint32_t Rn = (instruction >> 4) & ((1 << 4) - 1);
 uint32_t *Rn_address = &arm.registers[Rn];
-//int32_t *Rd_address = &arm.registers[Rd];
-int32_t base_reg_value = arm.registers[Rn];
+//uint32_t *Rd_address = &arm.registers[Rd];
+uint32_t base_reg_value = arm.registers[Rn];
 
 if(immediate_flag){ 
     calculateShiftedOperand(&offset, 0);    

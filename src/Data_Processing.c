@@ -159,9 +159,9 @@ void dataProcessing() {
   int bitS = (1 << 20) & instr;
   int opcode = (instr >> 21) & ((1 << 4) - 1); 
   int rd = (instr >> 12) & ((1 << 4) - 1);
-  int rn = arm.registers[(instr >> 16) & ((1 << 4) - 1)];
+  uint32_t rn = arm.registers[(instr >> 16) & ((1 << 4) - 1)];
 
-  int32_t operand = ((1 << 12) - 1 ) & instr;
+  uint32_t operand = ((1 << 12) - 1 ) & instr;
   
   if(bitI != 0) {
     // operand2 is a rotated immediate

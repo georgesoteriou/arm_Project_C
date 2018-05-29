@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   //Load program to memmory
   int counter = 0;
   while(!feof(code)) {
-    int a = fgetc(code);
+    uint32_t a = fgetc(code);
     if(a == -1) {
       break;
     }
@@ -63,14 +63,13 @@ int main(int argc, char **argv) {
 
   for(int i = 0; i < 17; i++) {
     if(i == 15) {
-      printf("PC  :% 11i (0x%08x)", 4 * arm.registers[i], 4 * arm.registers[i]);
-      printf("\n");
-      
+      printf("PC  : % 10i (0x%08x)", 4 * arm.registers[i], 4 * arm.registers[i]);
+      printf("\n");      
     } else if(i == 16) {
-      printf("CPSR:% 11i (0x%08x)", arm.registers[i], arm.registers[i]);
+      printf("CPSR: % 10i (0x%08x)", arm.registers[i], arm.registers[i]);
       printf("\n");
     } else if(i != 13 && i != 14) {
-      printf("$%-3i:% 11i (0x%08x)", i, arm.registers[i], arm.registers[i]);
+      printf("$%-3i: % 10i (0x%08x)", i, arm.registers[i], arm.registers[i]);
       printf("\n");
     }
   }
