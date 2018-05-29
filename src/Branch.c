@@ -5,11 +5,10 @@
 void branch(){
     uint32_t *pc = &arm.registers[15]; 
     int32_t offset = ((1 << 24) - 1) & executeCommand;
-    if((offset & (1 << 24)) != 0) {
-        offset += (((1 << 8) - 1) << 24);
-    }
+    uint32_t mask = 1 << 23;
+    offset = (offset ^ mask) - mask;
     //Apply offset
-    (*pc) += (offset);
+    arm.registers[15] += (offset);
     //Fix pipeline by loading next commands
     fetchCommand = arm.memory[(*pc)];
     decodeCommand = fetchCommand;
