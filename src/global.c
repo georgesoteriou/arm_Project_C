@@ -141,7 +141,12 @@ void flagsZN(int32_t result) {
     //Z bit
     if(result == 0) {
         arm.registers[16] |= (1 << 30);
+    } else {
+        if((arm.registers[16] & (1 << 30)) != 0) {
+          arm.registers[16] -= (1 << 30);
+        }
     }
+
     if(result < 0){
         //set N bit
         uint32_t rnbit = (1 << 31) & result;
