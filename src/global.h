@@ -11,6 +11,8 @@ uint32_t fetchCommand;
 uint32_t decodeCommand;
 uint32_t executeCommand;
 
+uint32_t eofInst;
+
 void calculateShiftedOperand(uint32_t*, uint32_t);
 
 uint32_t calculateImmediateOperand(uint32_t);

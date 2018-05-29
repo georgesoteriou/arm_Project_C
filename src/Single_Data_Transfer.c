@@ -8,7 +8,7 @@ void loadData(uint32_t src, uint32_t dest){
 }
 
 void writeData(uint32_t src, uint32_t dest){
-    arm.memory[dest] = arm.registers[src];
+    arm.memory[dest / 4] = arm.registers[src];
 }
 
 void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
@@ -52,20 +52,23 @@ uint32_t *Rn_address = &arm.registers[Rn];
 //uint32_t *Rd_address = &arm.registers[Rd];
 uint32_t base_reg_value = arm.registers[Rn];
 
-if(immediate_flag != 0){ 
+if(immediate_flag != 0) { 
     calculateShiftedOperand(&offset, 0);    
-} else {
-    //offset = calculateImmediateOperand(offset);
 }
 
-
-if(preindexing_flag){
-    base_reg_value = calculate_address(base_reg_value, up_bit_flag, offset);
-    transferData(base_reg_value, Rd, load_flag);
+if(Rn == 15) {
+    arm.registers[Rd] = arm.memory[eofInst + arm.registers[15] - 1];
 } else {
-    //assert(Rd != Rn);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    transferData(base_reg_value, Rd, load_flag);
-    (*Rn_address) = calculate_address(base_reg_value, up_bit_flag, offset);
+
+    if(preindexing_flag){
+        base_reg_value = calculate_address(base_reg_value, up_bit_flag, offset);
+        transferData(base_reg_value, Rd, load_flag);
+    } else {
+        //assert(Rd != Rn);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        transferData(base_reg_value, Rd, load_flag);
+        (*Rn_address) = calculate_address(base_reg_value, up_bit_flag, offset);
+    }
+
 }
 }
 

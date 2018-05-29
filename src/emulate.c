@@ -38,6 +38,9 @@ int main(int argc, char **argv) {
       arm.memory[counter] <<= 8;
       arm.memory[counter] += fgetc(code);
     }
+    if(arm.memory[counter] == 0) {
+      eofInst = counter;
+    }
     arm.memory[counter] = endianConversion(arm.memory[counter]);
     counter++;
   }
@@ -63,18 +66,19 @@ int main(int argc, char **argv) {
 
   for(int i = 0; i < 17; i++) {
     if(i == 15) {
-      printf("PC  : % 10i (0x%08x)", 4 * arm.registers[i], 4 * arm.registers[i]);
-      printf("\n");      
+      printf("PC  : % 10i (0x%08x)\n", 4 * arm.registers[i], 4 * arm.registers[i]);      
     } else if(i == 16) {
       if(((int32_t) arm.registers[i]) < 0) {
-        printf("CPSR: % 11i (0x%08x)", arm.registers[i], arm.registers[i]);
+        printf("CPSR: % 11i (0x%08x)\n", arm.registers[i], arm.registers[i]);
       } else {
-        printf("CPSR:% 11i (0x%08x)", arm.registers[i], arm.registers[i]);
+        printf("CPSR:% 11i (0x%08x)\n", arm.registers[i], arm.registers[i]);
       }
-      printf("\n");
     } else if(i != 13 && i != 14) {
-      printf("$%-3i:% 11d (0x%08x)", i, arm.registers[i], arm.registers[i]);
-      printf("\n");
+      if(((int32_t) arm.registers[i]) < 0) {
+        printf("$%-3i: % 10d (0x%08x)\n", i, arm.registers[i], arm.registers[i]);
+      } else {
+        printf("$%-3i:% 11d (0x%08x)\n", i, arm.registers[i], arm.registers[i]);
+      }
     }
   }
 
