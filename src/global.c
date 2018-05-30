@@ -23,6 +23,12 @@ void initGlobalValues(void){
   vBit = 28;
 
 
+  regAddrLength = 4;
+  opcodeLength = 4;
+  sdtOffsetLength = 12;
+  operandLength = 12;
+  branchOffsetLength = 24;
+
   iBit = 25;
   sBit = 20;
   lBit = 20;
