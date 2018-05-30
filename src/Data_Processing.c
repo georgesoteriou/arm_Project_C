@@ -41,7 +41,7 @@
       if(a < b) {
         //C bit needs to be 0
         //if C bit is already one we need to clear it
-        if(selectBits(arm.registers[CPSR], cBit, 0) != 0) {
+        if(selectBit(arm.registers[CPSR], cBit) != 0) {
           arm.registers[CPSR] -= cMask;
         } else {
           arm.registers[CPSR] |= cMask;
@@ -58,7 +58,7 @@
       if(a < b){
         //C bit needs to be 0
         //if C bit is already one we need to clear it
-        if(selectBits(arm.registers[CPSR], cBit, 0) != 0) {
+        if(selectBit(arm.registers[CPSR], cBit) != 0) {
           arm.registers[CPSR] -= cMask;
         }
       } else {
@@ -74,7 +74,7 @@
       if(b < a) {
         //C bit needs to be 0
         //if C bit is already one we need to clear it
-        if(selectBits(arm.registers[CPSR], cBit, 0) != 0) {
+        if(selectBit(arm.registers[CPSR], cBit) != 0) {
           arm.registers[CPSR] -= cMask;
         }
       } else {
@@ -93,7 +93,7 @@
       } else {
         //if C bit needs to be 0
         //if C bit is already one we need to clear it
-        if(selectBits(arm.registers[CPSR], cBit, 0) != 0) {
+        if(selectBit(arm.registers[CPSR], cBit) != 0) {
           arm.registers[CPSR] -= cMask;
         }
       }
