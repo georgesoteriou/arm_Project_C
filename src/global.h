@@ -8,6 +8,8 @@ int PC;
 int CPSR;
 
 uint32_t endianConversion(uint32_t);
+uint32_t selectBit(uint32_t, uint32_t);
+uint32_t selectBits(uint32_t, uint32_t, uint32_t);
 
 struct ARM {
   uint32_t registers[17];

@@ -12,17 +12,26 @@ void initGlobalValues(void){
   CPSR = 16;
 }
 
+
 //Convert to and from big/small Endian
 uint32_t endianConversion(uint32_t bits) {
   uint32_t mask = (1 << 8) - 1;
   uint32_t result = (bits & mask);
   for(int i = 0; i < 3; i++) {
-  result <<= 8;
-  bits >>= 8;
-  result += (bits & mask);
+    result <<= 8;
+    bits >>= 8;
+    result += (bits & mask);
   }
 
   return result;
+}
+
+uint32_t selectBit(uint32_t data, uint32_t bit) {
+  return (1 << bit) & data;
+}
+
+uint32_t selectBits(uint32_t data, uint32_t amount, uint32_t offset) {
+  return (((1 << amount) - 1) << offset) & data;
 }
 
 //Set Z and N flags
