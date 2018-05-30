@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   //Load program to memmory
   int counter = 0;
   while(!feof(code)) {
-    int a = fgetc(code);
+    uint32_t a = fgetc(code);
     if(a == -1) {
       break;
     }
@@ -38,14 +38,15 @@ int main(int argc, char **argv) {
       arm.memory[counter] <<= 8;
       arm.memory[counter] += fgetc(code);
     }
-    printf("%0x ", arm.memory[counter]);
+    if(arm.memory[counter] == 0) {
+      eofInst = counter;
+    }
     arm.memory[counter] = endianConversion(arm.memory[counter]);
-    printf("%0x\n", arm.memory[counter]);
     counter++;
   }
 
   //fetch command at 0
-  int *pc = &arm.registers[15];
+  uint32_t *pc = &arm.registers[15];
   //cycle 0
   int execute = -1;
   decodeCommand = 0;
@@ -65,15 +66,19 @@ int main(int argc, char **argv) {
 
   for(int i = 0; i < 17; i++) {
     if(i == 15) {
-      printf("PC %i (%0x)", 4 * arm.registers[i], arm.registers[i]);
-      printf("\n");
-      
+      printf("PC  : % 10i (0x%08x)\n", 4 * arm.registers[i], 4 * arm.registers[i]);      
     } else if(i == 16) {
-      printf("CPSR %i (%0x)", arm.registers[i], arm.registers[i]);
-      printf("\n");
+      if(((int32_t) arm.registers[i]) < 0) {
+        printf("CPSR: % 11i (0x%08x)\n", arm.registers[i], arm.registers[i]);
+      } else {
+        printf("CPSR:% 11i (0x%08x)\n", arm.registers[i], arm.registers[i]);
+      }
     } else if(i != 13 && i != 14) {
-      printf("$%i %i (%0x)", i, arm.registers[i], arm.registers[i]);
-      printf("\n");
+      if(((int32_t) arm.registers[i]) < 0) {
+        printf("$%-3i: % 10d (0x%08x)\n", i, arm.registers[i], arm.registers[i]);
+      } else {
+        printf("$%-3i:% 11d (0x%08x)\n", i, arm.registers[i], arm.registers[i]);
+      }
     }
   }
 
@@ -81,7 +86,7 @@ int main(int argc, char **argv) {
 
   for(int i = 0; i < 16384; i++) {
     if(arm.memory[i] != 0) {
-      printf("%0x: %0x\n", i * 4, endianConversion(arm.memory[i]));
+      printf("0x%08x: 0x%08x\n", i * 4, endianConversion(arm.memory[i]));
     }
   }
 

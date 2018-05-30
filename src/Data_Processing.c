@@ -51,15 +51,16 @@ void sub (int a, int b, int s, int rd) {
   int32_t result = a - b;
 
   if(s != 0) {
-    if(((b < 0) && (a > INT_MAX + b)) || ((b > 0) && (a < INT_MIN + b))) {
-     arm.registers[16] |= (1 << 29);
-    } else {
+    //if(((b < 0) && (a > INT_MAX + b)) || ((b > 0) && (a < INT_MIN + b))) {
+     if(a < b) {
      //C bit needs to be 0
      //if C bit is already one we need to clear it
        if((arm.registers[16] & (1 << 29)) != 0) {
          arm.registers[16] -= (1 << 29);
-       }
+    } else {
+     arm.registers[16] |= (1 << 29);
     }
+  }
 
     flagsZN(result);
   }
@@ -71,14 +72,15 @@ void cmp(int a, int b, int s, int rd) {
   int32_t result = a - b;
 
   if(s != 0) {
-    if(((b < 0) && (a > INT_MAX + b)) || ((b > 0) && (a < INT_MIN + b))) {
-     arm.registers[16] |= (1 << 29);
-    } else {
+  //  if(((b < 0) && (a > INT_MAX + b)) || ((b > 0) && (a < INT_MIN + b))) 
+    if(a < b){
      //C bit needs to be 0
      //if C bit is already one we need to clear it
        if((arm.registers[16] & (1 << 29)) != 0) {
          arm.registers[16] -= (1 << 29);
        }
+    } else {
+     arm.registers[16] |= (1 << 29);
     }
 
     flagsZN(result);
@@ -89,14 +91,15 @@ void rsb (int a, int b, int s, int rd) {
   int32_t result = b - a;
 
   if(s != 0) {
-    if(((a < 0) && (b > INT_MAX + a)) || ((a > 0) && (b < INT_MIN + a))) {
-     arm.registers[16] |= (1 << 29);
-    } else {
+    if(b < a) {
+    //if(((a < 0) && (b > INT_MAX + a)) || ((a > 0) && (b < INT_MIN + a))) {
      //C bit needs to be 0
      //if C bit is already one we need to clear it
        if((arm.registers[16] & (1 << 29)) != 0) {
          arm.registers[16] -= (1 << 29);
        }
+    } else {
+     arm.registers[16] |= (1 << 29);
     }
 
     flagsZN(result);
@@ -154,14 +157,14 @@ void dataProcessing() {
   op_table[12] = orr;
   op_table[13] = mov;
 
-  int32_t instr = executeCommand;
+  uint32_t instr = executeCommand;
   int bitI = (1 << 25) & instr;
   int bitS = (1 << 20) & instr;
   int opcode = (instr >> 21) & ((1 << 4) - 1); 
   int rd = (instr >> 12) & ((1 << 4) - 1);
-  int rn = arm.registers[(instr >> 16) & ((1 << 4) - 1)];
+  uint32_t rn = arm.registers[(instr >> 16) & ((1 << 4) - 1)];
 
-  int32_t operand = ((1 << 12) - 1 ) & instr;
+  uint32_t operand = ((1 << 12) - 1 ) & instr;
   
   if(bitI != 0) {
     // operand2 is a rotated immediate

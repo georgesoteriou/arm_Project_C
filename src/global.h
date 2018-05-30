@@ -1,18 +1,25 @@
 #include <stdint.h>
 
-int32_t endianConversion(int32_t);
+uint32_t endianConversion(uint32_t);
 
 struct ARM {
-    int32_t registers[17];
-    int32_t memory[16384];
+    uint32_t registers[17];
+    uint32_t memory[16384];
 }arm;
 
-int32_t fetchCommand;
-int32_t decodeCommand;
-int32_t executeCommand;
+uint32_t fetchCommand;
+uint32_t decodeCommand;
+uint32_t executeCommand;
 
-void calculateShiftedOperand(int32_t*, int32_t);
+uint32_t eofInst;
 
-int32_t calculateImmediateOperand(int32_t);
+void calculateShiftedOperand(uint32_t*, uint32_t);
+
+uint32_t calculateImmediateOperand(uint32_t);
 
 void flagsZN(int32_t);
+
+uint32_t getOffsetWord(uint32_t);
+void setOffsetWord(uint32_t, uint32_t);
+
+int32_t isWithinBounds(int32_t);
