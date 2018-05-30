@@ -28,6 +28,8 @@ void initGlobalValues(void){
   sdtOffsetLength = 12;
   operandLength = 12;
   branchOffsetLength = 24;
+  
+  opcodeStart = 21;
 
   iBit = 25;
   sBit = 20;
