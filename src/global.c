@@ -10,6 +10,27 @@ void initGlobalValues(void){
   PC = 15;
   //CPSR is register 16
   CPSR = 16;
+ 
+  //General Constants
+  nMask = (1 << 31);
+  zMask = (1 << 30);
+  cMask = (1 << 29);
+  vMask = (1 << 28);
+  
+  nBit = 31;
+  zBit = 30;
+  cBit = 29;
+  vBit = 28;
+
+
+  iBit = 25;
+  sBit = 20;
+  lBit = 20;
+  aBit = 21;
+  pBit = 24;
+  uBit = 23;
+
+  
 }
 
 
@@ -31,7 +52,7 @@ uint32_t selectBit(uint32_t data, uint32_t bit) {
 }
 
 uint32_t selectBits(uint32_t data, uint32_t amount, uint32_t offset) {
-  return (((1 << amount) - 1) << offset) & data;
+  return ((((1 << amount) - 1) << offset) & data) >> offset;
 }
 
 //Set Z and N flags

@@ -7,6 +7,32 @@ int memorySize;
 int PC;
 int CPSR;
 
+int nMask;
+int zMask;
+int cMask;
+int vMask;
+
+int nBit;
+int zBit;
+int cBit;
+int vBit;
+
+
+int regAddrLength;
+int opcodeLength;
+int sdtOffsetLength;
+int operandLength;
+int branchOffsetLength;
+
+int opcodeStart;
+
+int iBit;
+int sBit;
+int lBit;
+int aBit;
+int pBit;
+int uBit;
+
 uint32_t endianConversion(uint32_t);
 uint32_t selectBit(uint32_t, uint32_t);
 uint32_t selectBits(uint32_t, uint32_t, uint32_t);

@@ -6,6 +6,7 @@ void branch(void){
   uint32_t *pc = &arm.registers[PC]; 
   //int32_t offset = ((1 << 24) - 1) & arm.executeCommand;
   int32_t offset = selectBits(arm.executeCommand, 24, 0);
+  //sign extending offset, which is currently bits 0 - 23
   uint32_t mask = 1 << 23;
   offset = (offset ^ mask) - mask;
   //Apply offset
