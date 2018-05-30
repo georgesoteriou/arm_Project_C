@@ -1,2 +1,1 @@
-   void multiply(void);
-
+void multiply(void);

@@ -3,7 +3,6 @@
 #include "global.h"
 
 void multiply(void) {
-  //memory[registers[15]] = instructiunea mea
   uint32_t command = arm.executeCommand;
   uint32_t bitA = (1 << 21) & command;
   uint32_t bitS = (1 << 20) & command;

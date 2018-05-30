@@ -7,12 +7,14 @@
 #include "decode.h"
 
 int main(int argc, char **argv) {
+  initGlobalValues();
+
   //initialise ARM to 0
   for(int i = 0; i < 17; i++){
-      arm.registers[i] = 0;
+    arm.registers[i] = 0;
   }
   for(int i = 0; i < 2048; i++){
-      arm.memory[i] = 0;
+    arm.memory[i] = 0;
   }
 
   assert(argc == 2);
@@ -20,12 +22,10 @@ int main(int argc, char **argv) {
   //read from file
   FILE* code;
   code = fopen(argv[1], "r");
-
   if(code == NULL) {
     fprintf(stderr, "Can't open input file!\n");
     exit(-1);
   }
-
   //Load program to memmory
   int counter = 0;
   while(!feof(code)) {
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   }
 
   //fetch command at 0
-  uint32_t *pc = &arm.registers[15];
+  uint32_t *pc = &arm.registers[PC];
   //cycle 0
   int execute = -1;
   arm.decodeCommand = 0;
@@ -65,9 +65,9 @@ int main(int argc, char **argv) {
   printf("Registers:\n");
 
   for(int i = 0; i < 17; i++) {
-    if(i == 15) {
+    if(i == PC) {
       printf("PC  : % 10i (0x%08x)\n", 4 * arm.registers[i], 4 * arm.registers[i]);      
-    } else if(i == 16) {
+    } else if(i == CPSR) {
       if(((int32_t) arm.registers[i]) < 0) {
         printf("CPSR: % 11i (0x%08x)\n", arm.registers[i], arm.registers[i]);
       } else {
