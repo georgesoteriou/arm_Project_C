@@ -9,7 +9,7 @@ all: assemble emulate
 
 assemble: assemble.o
 
-emulate: emulate.o
+emulate: global.o Branch.o Data_Processing.o Multiply.o Single_Data_Transfer.o decode.o execute.o emulate.o
 
 clean:
 	rm -f $(wildcard *.o)
