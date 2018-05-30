@@ -1,0 +1,1 @@
+void initGlobalValues(void);

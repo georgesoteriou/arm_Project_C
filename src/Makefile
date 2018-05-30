@@ -1,5 +1,12 @@
 CC      = gcc
-CFLAGS  = -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -std=c99 -Werror -pedantic
+CFLAGS  = -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -D_DEFAULT_SOURCE -std=c99 \
+-Werror -pedantic -L.
+
+ASSEMBLE_SOURCES = assemble.c $(wildcard assemble_src/*.c)
+ASSEMBLE_OBJECTS = assemble.o $(ASSEMBLE_SOURCES:.c=.o)
+
+EMULATE_SOURCES = emulate.c $(wildcard emulate_src/*.c)
+EMULATE_OBJECTS = emulate.o $(EMULATE_SOURCES:.c=.o)
 
 .SUFFIXES: .c .o
 
@@ -7,11 +14,12 @@ CFLAGS  = -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -std=c99 -Werror -pedantic
 
 all: assemble emulate
 
-assemble: assemble.o
+assemble: $(ASSEMBLE_OBJECTS)
 
-emulate: global.o shift.o Branch.o Data_Processing.o Multiply.o Single_Data_Transfer.o decode.o execute.o emulate.o
+emulate: $(EMULATE_OBJECTS)
 
 clean:
-	rm -f $(wildcard *.o)
+	rm -f $(ASSEMBLE_OBJECTS)
+	rm -f $(EMULATE_OBJECTS)
 	rm -f assemble
 	rm -f emulate
