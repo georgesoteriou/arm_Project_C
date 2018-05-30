@@ -1,5 +1,6 @@
 #include "Data_Processing.h"
 #include "global.h"
+#include "shift.h"
 #include <stdint.h>
 #include <limits.h>
 
@@ -143,7 +144,7 @@ void mov(int a, int b, int s, int rd) {
 }
 
 
-void dataProcessing() {
+void dataProcessing(void) {
 
   static operation op_table[15];
   op_table[0] =  and;
@@ -157,7 +158,7 @@ void dataProcessing() {
   op_table[12] = orr;
   op_table[13] = mov;
 
-  uint32_t instr = executeCommand;
+  uint32_t instr = arm.executeCommand;
   int bitI = (1 << 25) & instr;
   int bitS = (1 << 20) & instr;
   int opcode = (instr >> 21) & ((1 << 4) - 1); 

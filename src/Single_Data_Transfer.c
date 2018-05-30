@@ -1,7 +1,8 @@
 #include "Single_Data_Transfer.h"
 #include "global.h"
-#include<stdio.h>
-#include<stdint.h>
+#include "shift.h"
+#include <stdio.h>
+#include <stdint.h>
 
 void loadData(uint32_t src, uint32_t dest){
     arm.registers[dest] = getOffsetWord(src);
@@ -34,9 +35,9 @@ uint32_t calculate_address(uint32_t addr, uint32_t add_flag, uint32_t offset){
     return addr - offset;
 }
 
-void singleDataTransfer(){
+void singleDataTransfer(void){
 
-uint32_t instruction = executeCommand;
+uint32_t instruction = arm.executeCommand;
 
 uint32_t offset        = instruction & ((1 << 12) - 1);
 uint32_t immediate_flag   = instruction & (1<<25);
@@ -64,7 +65,7 @@ if(Rn == 15) {
         base_reg_value = calculate_address(base_reg_value, up_bit_flag, offset);
         transferData(base_reg_value, Rd, load_flag);
     } else {
-        //assert(Rd != Rn);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //assert(Rd != Rn);
         transferData(base_reg_value, Rd, load_flag);
         (*Rn_address) = calculate_address(base_reg_value, up_bit_flag, offset);
     }

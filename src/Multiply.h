@@ -1,2 +1,2 @@
-   void multiply();
+   void multiply(void);
 

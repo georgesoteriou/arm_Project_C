@@ -35,7 +35,7 @@ static cond cond_table[15];
 //-------------------DECODE FUNCTION------------------
 int decode_fn(uint32_t command) {
     if(command == 0) return -2;
-    executeCommand = command;
+    arm.executeCommand = command;
     uint32_t b27 = (1 << 27) & command;
     uint32_t b26 = (1 << 26) & command;
     uint32_t b25 = (1 << 25) & command;

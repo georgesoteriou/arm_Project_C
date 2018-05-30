@@ -1,1 +1,1 @@
-void branch();
+void branch(void);

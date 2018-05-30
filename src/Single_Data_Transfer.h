@@ -1,2 +1,2 @@
-void singleDataTransfer();
+void singleDataTransfer(void);
 

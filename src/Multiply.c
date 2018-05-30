@@ -2,9 +2,9 @@
 #include "Multiply.h"
 #include "global.h"
 
-void multiply() {
+void multiply(void) {
   //memory[registers[15]] = instructiunea mea
-  uint32_t command = executeCommand;
+  uint32_t command = arm.executeCommand;
   uint32_t bitA = (1 << 21) & command;
   uint32_t bitS = (1 << 20) & command;
   uint32_t *rd = &arm.registers[(command >> 16) & ((1 << 4) - 1)];

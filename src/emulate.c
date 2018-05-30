@@ -49,17 +49,17 @@ int main(int argc, char **argv) {
   uint32_t *pc = &arm.registers[15];
   //cycle 0
   int execute = -1;
-  decodeCommand = 0;
-  fetchCommand = arm.memory[(*pc)];
+  arm.decodeCommand = 0;
+  arm.fetchCommand = arm.memory[(*pc)];
   //cycle 1
-  decodeCommand = fetchCommand;
-  fetchCommand = arm.memory[++(*pc)];
+  arm.decodeCommand = arm.fetchCommand;
+  arm.fetchCommand = arm.memory[++(*pc)];
   //main fetch decode execute function
   while(execute != -2) {
     execute_fn(execute);
-    execute = decode_fn(decodeCommand);
-    decodeCommand = fetchCommand;
-    fetchCommand = arm.memory[++(*pc)];
+    execute = decode_fn(arm.decodeCommand);
+    arm.decodeCommand = arm.fetchCommand;
+    arm.fetchCommand = arm.memory[++(*pc)];
   }
   //end of loop output
   printf("Registers:\n");
