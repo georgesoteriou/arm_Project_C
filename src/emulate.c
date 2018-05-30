@@ -2,9 +2,9 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "global.h"
-#include "execute.h"
-#include "decode.h"
+#include "emulate_src/global.h"
+#include "emulate_src/execute.h"
+#include "emulate_src/decode.h"
 
 int main(int argc, char **argv) {
   initGlobalValues();
