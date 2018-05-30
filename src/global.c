@@ -173,6 +173,29 @@ uint32_t getOffsetWord(uint32_t address){
     }
 }
 
+void setOffsetWord(uint32_t address, uint32_t data){
+    if((address % 4) == 0) {
+      arm.memory[address / 4] = data;
+    } else {
+      uint32_t q = address / 4;
+      uint32_t r = address % 4;
+      uint32_t *mem1   = &arm.memory[q + 1]; 
+      uint32_t *mem2   = &arm.memory[q];
+      uint32_t mask1  = ((1 << (8 * (4-r))) - 1) << (8 * r);
+      uint32_t mask2  = (~mask1);
+      uint32_t dmask1 = mask1 >> (8 * r);
+      uint32_t dmask2 = (~dmask1);
+
+      //clear mem locations
+      (*mem1) &= mask1;
+      (*mem2) &= mask2;
+      
+      //set mem
+      (*mem2) += ((dmask1 & data) << (8 * r));
+      (*mem1) += (dmask2 & data);
+    }
+}
+
 int32_t isWithinBounds(int32_t memAddr){
     return memAddr >= 0 && memAddr < 16384;
 }

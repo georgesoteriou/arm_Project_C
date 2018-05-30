@@ -20,5 +20,6 @@ uint32_t calculateImmediateOperand(uint32_t);
 void flagsZN(int32_t);
 
 uint32_t getOffsetWord(uint32_t);
+void setOffsetWord(uint32_t, uint32_t);
 
 int32_t isWithinBounds(int32_t);

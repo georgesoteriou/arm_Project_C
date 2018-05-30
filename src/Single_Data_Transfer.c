@@ -8,7 +8,7 @@ void loadData(uint32_t src, uint32_t dest){
 }
 
 void writeData(uint32_t src, uint32_t dest){
-    arm.memory[dest / 4] = arm.registers[src];
+    setOffsetWord(dest, arm.registers[src]);
 }
 
 void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
