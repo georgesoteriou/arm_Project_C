@@ -1,6 +1,7 @@
 #include "global.h"
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 void initGlobalValues(void){
   
@@ -22,13 +23,14 @@ void addLabel(char* label, uint32_t address){
   curr->next->label = NULL;
   curr->next->address = 0;
   curr->next->next = NULL;
-  curr->label = label;
+  curr->label = malloc(strlen(label) + 1);
+  strcpy(curr->label, label);
   curr->address = address;
 }
 
 uint32_t getAddress(char* label){
   struct SymbolNode* curr = SymbolTable;
-  while(curr != NULL && curr->label != label){
+  while(curr != NULL && strcmp(curr->label,label) != 0){
     curr = curr->next;
   }
   if(curr != NULL) {
@@ -42,6 +44,7 @@ void clearSymbolTableHelper(struct SymbolNode* head){
   if(head->next != NULL){
     clearSymbolTableHelper(head->next);
   }
+  free(head->label);
   free(head);
 }
 
@@ -49,6 +52,7 @@ void clearSymbolTable(void){
   if(SymbolTable->next != NULL){
     clearSymbolTableHelper(SymbolTable->next);
   }
+  free(SymbolTable->label);
   free(SymbolTable);
 }
 

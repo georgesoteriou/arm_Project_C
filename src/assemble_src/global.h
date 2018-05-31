@@ -12,8 +12,8 @@ struct SymbolNode* SymbolTable;
 
 void initSymbolTable(void);
 
-void addSymbolTable(char*, uint32_t);
+void addLabel(char*, uint32_t);
 
-uint32_t getSymbolTable(char*);
+uint32_t getAddress(char*);
 
 void clearSymbolTable(void);

@@ -65,10 +65,8 @@ int main(int argc, char **argv) {
       label = strtok(buffer, "\n");
       if(label[strlen(label) - 2] == ':'){
         label[strlen(label) - 2] = '\0';
-        printf("%s\n",label);
-        char* labelcopy = NULL;
-        strcpy(labelcopy, label);
-        addSymbolTable(labelcopy, adr);
+        //printf("%s\n",label);
+        addLabel(label, adr);
       }else{
         adr += 4;
       }
@@ -78,7 +76,7 @@ int main(int argc, char **argv) {
     }
     fclose(input_file);
   }
-
+  
   //read from file
   input_file = fopen( filename, "r" );
   char* mnemonic;
