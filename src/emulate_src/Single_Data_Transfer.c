@@ -37,19 +37,15 @@ uint32_t calculate_address(uint32_t addr, uint32_t add_flag, uint32_t offset){
 
 void singleDataTransfer(void){
 
-  uint32_t instruction = arm.executeCommand;
-  uint32_t offset        = instruction & ((1 << 12) - 1);
-  uint32_t immediate_flag   = instruction & (1<<25);
-  uint32_t preindexing_flag = instruction & (1<<24);
-  uint32_t up_bit_flag   = instruction & (1<<23);
-  uint32_t load_flag     = instruction & (1<<20);
-  //shift right by 12 positions so I can get the address to Rn
-  instruction >>= 12; 
-  uint32_t Rd = instruction & ((1 << 4) - 1);
-  //shift right by  4 positions so I can get the address to Rn
-  uint32_t Rn = (instruction >> 4) & ((1 << 4) - 1);
+  uint32_t instr = arm.executeCommand;
+  uint32_t offset = selectBits(instr, sdtOffsetLength, 0);
+  uint32_t immediate_flag   = selectBit(instr, iBit);
+  uint32_t preindexing_flag = selectBit(instr, pBit);
+  uint32_t up_bit_flag   = selectBit(instr, uBit);
+  uint32_t load_flag     = selectBit(instr, lBit);
+  uint32_t Rd = selectBits(instr, regAddrLength, sdtOffsetLength);
+  uint32_t Rn = selectBits(instr, regAddrLength, sdtOffsetLength + regAddrLength);
   uint32_t *Rn_address = &arm.registers[Rn];
-  //uint32_t *Rd_address = &arm.registers[Rd];
   uint32_t base_reg_value = arm.registers[Rn];
 
   if(immediate_flag != 0) { 
@@ -63,7 +59,6 @@ void singleDataTransfer(void){
       base_reg_value = calculate_address(base_reg_value, up_bit_flag, offset);
       transferData(base_reg_value, Rd, load_flag);
     } else {
-      //assert(Rd != Rn);
       transferData(base_reg_value, Rd, load_flag);
       (*Rn_address) = calculate_address(base_reg_value, up_bit_flag, offset);
     }

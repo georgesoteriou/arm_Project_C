@@ -20,11 +20,14 @@ int vBit;
 
 int regAddrLength;
 int opcodeLength;
+int condLength;
+int immediateLength;
 int sdtOffsetLength;
 int operandLength;
 int branchOffsetLength;
 
 int opcodeStart;
+int condStart;
 
 int iBit;
 int sBit;

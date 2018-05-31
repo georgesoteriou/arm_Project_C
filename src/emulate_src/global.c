@@ -22,14 +22,16 @@ void initGlobalValues(void){
   cBit = 29;
   vBit = 28;
 
-
   regAddrLength = 4;
   opcodeLength = 4;
+  condLength = 4;
+  immediateLength = 8;
   sdtOffsetLength = 12;
   operandLength = 12;
   branchOffsetLength = 24;
   
   opcodeStart = 21;
+  condStart = 28;
 
   iBit = 25;
   sBit = 20;
@@ -67,21 +69,21 @@ uint32_t selectBits(uint32_t data, uint32_t amount, uint32_t offset) {
 void flagsZN(int32_t result) {
   //Z bit
   if(result == 0) {
-    arm.registers[CPSR] |= (1 << 30);
+    arm.registers[CPSR] |= zMask;
   } else {
-    if((arm.registers[CPSR] & (1 << 30)) != 0) {
-      arm.registers[CPSR] -= (1 << 30);
+    if(selectBit(arm.registers[CPSR], zBit) != 0) {
+      arm.registers[CPSR] -= zMask;
     }
   }
   
   if(result < 0){
     //set N bit
-    uint32_t rnbit = (1 << 31) & result;
-    uint32_t nbit = (1 << 31) & arm.registers[CPSR];
+    uint32_t rnbit = selectBit(result, nBit);
+    uint32_t nbit = selectBit(arm.registers[CPSR], nBit);
     if(rnbit == 0 && nbit != 0) {
-      arm.registers[CPSR] -= (1 << 31);
+      arm.registers[CPSR] -= nMask;
     } else { 
-      arm.registers[CPSR] |= (1 << 31);
+      arm.registers[CPSR] |= nMask;
     }
   }
 }
@@ -97,7 +99,7 @@ uint32_t getOffsetWord(uint32_t address){
     uint32_t mem1 = arm.memory[q + 1]; 
     uint32_t mem2 = arm.memory[q];
     uint32_t mask1 = ((1 << (8 * r)) - 1);
-    uint32_t mask2 = ((1 << (8 * (4 -r))) - 1) << (8 * r);
+    uint32_t mask2 = ~mask1;
     return ((mask2 & mem2) >> (8 * r)) + ((mask1 & mem1) << (8 * (4 - r)));
   }
 }

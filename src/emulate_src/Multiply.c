@@ -3,17 +3,17 @@
 #include "global.h"
 
 void multiply(void) {
-  uint32_t command = arm.executeCommand;
-  uint32_t bitA = (1 << 21) & command;
-  uint32_t bitS = (1 << 20) & command;
-  uint32_t *rd = &arm.registers[(command >> 16) & ((1 << 4) - 1)];
-  uint32_t rs = arm.registers[(command >> 8) & ((1 << 4) - 1)];
-  uint32_t rm = arm.registers[command & ((1 << 4) - 1)];
+  uint32_t instr = arm.executeCommand;
+  uint32_t bitA = selectBit(instr, aBit);
+  uint32_t bitS = selectBit(instr, sBit);
+  uint32_t *rd = &arm.registers[selectBits(instr, regAddrLength, operandLength + regAddrLength)];
+  uint32_t rs = arm.registers[selectBits(instr, regAddrLength, immediateLength)];
+  uint32_t rm = arm.registers[selectBits(instr, regAddrLength, 0)];
   uint32_t result;
 
   if (bitA) {
     //multiply and accumulate
-    uint32_t rn = arm.registers[(command >> 12) & ((1 << 4) - 1)];
+    uint32_t rn = arm.registers[selectBits(instr, regAddrLength, operandLength)];
     result = rm * rs + rn;
   } else {
     //just multiply
