@@ -10,6 +10,7 @@
 #include "assemble_src/Branch.h"
 #include "assemble_src/special.h"
 
+
 #define BUFFER_SIZE 511
 
 typedef uint32_t (*Mnemonic)(int, char*);
@@ -51,7 +52,9 @@ int main(int argc, char **argv) {
   //read from file
   FILE* input_file = fopen( filename, "r" );
   char* label;
-  
+
+  SymbolTable = initSymbolTable();
+
   //FIRST PASS
   if(input_file == NULL){
     printf("Unable to open file %s\n", filename );
@@ -62,7 +65,10 @@ int main(int argc, char **argv) {
       label = strtok(buffer, "\n");
       if(label[strlen(label) - 2] == ':'){
         label[strlen(label) - 2] = '\0';
-        //TODO: ASSIGN LABLE "label" TO ADDRESS "ard"
+        printf("%s\n",label);
+        char* labelcopy = NULL;
+        strcpy(labelcopy,label);
+        addSymbolTable(SymbolTable, labelcopy, adr);
       }else{
         adr += 4;
       }
@@ -101,5 +107,8 @@ int main(int argc, char **argv) {
     }
     fclose( input_file );
   }
+
+  //CLEAR SymbolTable
+  clearSymbolTable(SymbolTable);
   return EXIT_SUCCESS;
 }
