@@ -6,7 +6,7 @@
 #include "assemble_src/global.h"
 
 typedef uint32_t (*Mnemonic)(uint32_t, uint32_t, uint32_t, uint32_t);
-static Mnemonic mnemonicTable[15];
+static Mnemonic mnemonicTable[15]; 
 
 void initMnemonicTable(){
   //implement table
