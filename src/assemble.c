@@ -5,7 +5,17 @@
 #include <string.h>
 #include "assemble_src/global.h"
 
+typedef uint32_t (*Mnemonic)(uint32_t, uint32_t, uint32_t, uint32_t);
+static Mnemonic mnemonicTable[15];
+
+void initMnemonicTable(){
+  //implement table
+  //mnemonicTable[0] = ;
+}
+
 int main(int argc, char **argv) {
+
+  initMnemonicTable();
   
   assert(argc == 3);
 
@@ -61,13 +71,17 @@ int main(int argc, char **argv) {
     if(currchar == '\n'){
       if(line[charNum-1] != ':'){
         char *token = strtok(line, " ,");
+        int mnemonic = 0;
+        for(int i = 0; i < 4; i++) {
+          mnemonic += (int) (token[i]);
+        }
         while (token != NULL){
           //SPLIT COMMANDS AND DO STUFF
           //*token is the first letter
-          printf("%s ", token);
           token = strtok(NULL, " ,");
         }
-        printf("\n");
+        uint32_t result = mnemonicTable[mnemonic](0,0,0,0);
+        printf("%i",result);
       }
       for(int i = 0; i < 511; i++) {
         line[i] = 0;
