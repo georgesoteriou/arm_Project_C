@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
   FILE* input_file = fopen( filename, "r" );
   char* label;
 
-  SymbolTable = initSymbolTable();
+  initSymbolTable();
 
   //FIRST PASS
   if(input_file == NULL){
@@ -67,8 +67,8 @@ int main(int argc, char **argv) {
         label[strlen(label) - 2] = '\0';
         printf("%s\n",label);
         char* labelcopy = NULL;
-        strcpy(labelcopy,label);
-        addSymbolTable(SymbolTable, labelcopy, adr);
+        strcpy(labelcopy, label);
+        addSymbolTable(labelcopy, adr);
       }else{
         adr += 4;
       }
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
     if(ferror(input_file) ){
       perror( "The following error occurred" );
     }
-    fclose( input_file );
+    fclose(input_file);
   }
 
   //read from file
@@ -109,6 +109,6 @@ int main(int argc, char **argv) {
   }
 
   //CLEAR SymbolTable
-  clearSymbolTable(SymbolTable);
+  clearSymbolTable();
   return EXIT_SUCCESS;
 }

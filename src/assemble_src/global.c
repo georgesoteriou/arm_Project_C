@@ -6,16 +6,15 @@ void initGlobalValues(void){
   
 }
 
-struct SymbolNode* initSymbolTable(){
-  struct SymbolNode* symbolTable = (struct SymbolNode*) (malloc( sizeof( struct SymbolNode ) ));
-  symbolTable->label = NULL;
-  symbolTable->address = 0;
-  symbolTable->next = NULL;
-  return symbolTable;
+void initSymbolTable(void){
+  SymbolTable = (struct SymbolNode*) (malloc( sizeof( struct SymbolNode ) ));
+  SymbolTable->label = NULL;
+  SymbolTable->address = 0;
+  SymbolTable->next = NULL;
 }
 
-void addSymbolTable(struct SymbolNode* head, char* label, uint32_t address){
-  struct SymbolNode* curr = head;
+void addLabel(char* label, uint32_t address){
+  struct SymbolNode* curr = SymbolTable;
   while(curr->label != NULL){
     curr = curr->next;
   }
@@ -27,8 +26,8 @@ void addSymbolTable(struct SymbolNode* head, char* label, uint32_t address){
   curr->address = address;
 }
 
-uint32_t getSymbolTable(struct SymbolNode* head, char* label){
-  struct SymbolNode* curr = head;
+uint32_t getAddress(char* label){
+  struct SymbolNode* curr = SymbolTable;
   while(curr != NULL && curr->label != label){
     curr = curr->next;
   }
@@ -39,9 +38,17 @@ uint32_t getSymbolTable(struct SymbolNode* head, char* label){
   }
 }
 
-void clearSymbolTable(struct SymbolNode* head){
+void clearSymbolTableHelper(struct SymbolNode* head){
   if(head->next != NULL){
-    clearSymbolTable(head->next);
+    clearSymbolTableHelper(head->next);
   }
   free(head);
 }
+
+void clearSymbolTable(void){
+  if(SymbolTable->next != NULL){
+    clearSymbolTableHelper(SymbolTable->next);
+  }
+  free(SymbolTable);
+}
+

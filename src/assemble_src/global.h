@@ -10,10 +10,10 @@ struct SymbolNode{
 
 struct SymbolNode* SymbolTable;
 
-struct SymbolNode* initSymbolTable();
+void initSymbolTable(void);
 
-void addSymbolTable(struct SymbolNode* , char*, uint32_t);
+void addSymbolTable(char*, uint32_t);
 
-uint32_t getSymbolTable(struct SymbolNode* , char* );
+uint32_t getSymbolTable(char*);
 
-void clearSymbolTable(struct SymbolNode*);
+void clearSymbolTable(void);
