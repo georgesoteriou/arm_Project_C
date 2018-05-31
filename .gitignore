@@ -34,3 +34,5 @@ assemble
 *.toc
 
 .vscode/*
+src/facc
+src/hash

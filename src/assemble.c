@@ -4,96 +4,102 @@
 #include <stdio.h>
 #include <string.h>
 #include "assemble_src/global.h"
+#include "assemble_src/Data_Processing.h"
+#include "assemble_src/Multiply.h"
+#include "assemble_src/Single_Data_Transfer.h"
+#include "assemble_src/Branch.h"
+#include "assemble_src/special.h"
 
-typedef uint32_t (*Mnemonic)(uint32_t, uint32_t, uint32_t, uint32_t);
-static Mnemonic mnemonicTable[15]; 
+#define BUFFER_SIZE 511
+
+typedef uint32_t (*Mnemonic)(int, char*);
+static Mnemonic mnemonicTable[1024]; 
 
 void initMnemonicTable(){
-  //implement table
-  //mnemonicTable[0] = ;
+  mnemonicTable[597] = dataProcessing;
+  mnemonicTable[643] = dataProcessing;
+  mnemonicTable[638] = dataProcessing;
+  mnemonicTable[617] = dataProcessing;
+  mnemonicTable[665] = dataProcessing;
+  mnemonicTable[681] = dataProcessing;
+  mnemonicTable[685] = dataProcessing;
+  mnemonicTable[694] = dataProcessing;
+  mnemonicTable[657] = dataProcessing;
+  mnemonicTable[653] = dataProcessing;
+  mnemonicTable[667] = multiply;
+  mnemonicTable[616] = multiply;
+  mnemonicTable[650] = singleDataTransfer;
+  mnemonicTable[689] = singleDataTransfer;
+  mnemonicTable[639] = branch;
+  mnemonicTable[621] = branch;
+  mnemonicTable[607] = branch;
+  mnemonicTable[662] = branch;
+  mnemonicTable[652] = branch;
+  mnemonicTable[617] = branch;
+  mnemonicTable[137] = branch;
+  mnemonicTable[662] = special;
+  mnemonicTable[1021]= special;
 }
 
 int main(int argc, char **argv) {
-
   initMnemonicTable();
-  
-  assert(argc == 3);
+
+  //assert(argc == 3);
+  const char *filename = argv[1];
+  char buffer[ BUFFER_SIZE ];
 
   //read from file
-  FILE* code;
-  code = fopen(argv[1], "r");
-  if(code == NULL) {
-    fprintf(stderr, "Can't open input file!\n");
-    exit(-1);
-  }
-
-  //First Pass
-  while(!feof(code)) {
-    char currchar = fgetc(code);
-    char label[511];
-    for(int i = 0; i < 511; i++) {
-      label[i] = 0;
-    }
-    int charNum = 0;
-    int lineNum = 0;
-    if(currchar == ':'){
-
-      //STORE LABEL using label index 0 - (charNum-1) with address (lineNum * 4)
-      //IGNORE LINE BELOW (Just use it to revent error until implementation)
-      label[0] = label[0];
-
-      fgetc(code);
-      charNum = 0;
-      continue;
-    }
-    if(currchar == '\n'){
-      charNum = 0;
-      lineNum++;
-      continue;
-    }
-    label[charNum] = currchar;
-    charNum++;
-  }
-  fclose(code);
-
-  //Second Pass
-  code = fopen(argv[1], "r");
-
-  char line[511];
-  for(int i = 0; i < 511; i++) {
-    line[i] = 0;
-  }
-  int charNum = 0;
-
-  while(!feof(code)) {
-    char currchar = fgetc(code);
-
-    if(currchar == '\n'){
-      if(line[charNum-1] != ':'){
-        char *token = strtok(line, " ,");
-        int mnemonic = 0;
-        for(int i = 0; i < 4; i++) {
-          mnemonic += (int) (token[i]);
-        }
-        while (token != NULL){
-          //SPLIT COMMANDS AND DO STUFF
-          //*token is the first letter
-          token = strtok(NULL, " ,");
-        }
-        uint32_t result = mnemonicTable[mnemonic](0,0,0,0);
-        printf("%i",result);
+  FILE* input_file = fopen( filename, "r" );
+  char* label;
+  
+  //FIRST PASS
+  if(input_file == NULL){
+    printf("Unable to open file %s\n", filename );
+  }else{
+    // Read each line into the buffer
+    int adr = 0;
+    while(fgets(buffer, BUFFER_SIZE, input_file) != NULL ){
+      label = strtok(buffer, "\n");
+      if(label[strlen(label) - 2] == ':'){
+        label[strlen(label) - 2] = '\0';
+        //TODO: ASSIGN LABLE "label" TO ADDRESS "ard"
+      }else{
+        adr += 4;
       }
-      for(int i = 0; i < 511; i++) {
-        line[i] = 0;
-      }
-      charNum = 0;
-    }else{
-      line[charNum] = currchar;
-      charNum++;
     }
+    if(ferror(input_file) ){
+      perror( "The following error occurred" );
+    }
+    fclose( input_file );
   }
 
-  //OUTPUT
-
+  //read from file
+  input_file = fopen( filename, "r" );
+  char* mnemonic;
+  char* line;
+  
+  //SECOND PASS
+  if(input_file == NULL){
+    printf("Unable to open file %s\n", filename );
+  }else{
+    // Read each line into the buffer
+    while(fgets(buffer, BUFFER_SIZE, input_file) != NULL ){
+      mnemonic = strtok(buffer, " ");
+      line = strtok(NULL, "\n" );
+      int hash = 0;
+      for(int i = 0; i < 4; i++){
+        hash += ((int) mnemonic[i]) * (i+1);
+      }
+      if(mnemonic[strlen(mnemonic) - 1] != '\n'){
+        uint32_t result = mnemonicTable[hash](hash, line);
+        //TODO:output binary to file
+        printf("%i", result);
+      }
+    }
+    if(ferror(input_file) ){
+      perror( "The following error occurred" );
+    }
+    fclose( input_file );
+  }
   return EXIT_SUCCESS;
 }
