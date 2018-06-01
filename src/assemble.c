@@ -46,26 +46,26 @@ int main(int argc, char **argv) {
   initMnemonicTable();
 
   //assert(argc == 3);
-  const char *filename = argv[1];
+  const char *readFile = argv[1];
+  const char *writeFile = argv[2];
   char buffer[ BUFFER_SIZE ];
 
   //read from file
-  FILE* input_file = fopen( filename, "r" );
+  FILE* input_file = fopen( readFile, "r" );
   char* label;
 
   initSymbolTable();
 
   //FIRST PASS
   if(input_file == NULL){
-    printf("Unable to open file %s\n", filename );
+    printf("Unable to open file %s\n", readFile );
   }else{
     // Read each line into the buffer
     int adr = 0;
     while(fgets(buffer, BUFFER_SIZE, input_file) != NULL ){
       label = strtok(buffer, "\n");
-      if(label[strlen(label) - 2] == ':'){
-        label[strlen(label) - 2] = '\0';
-        //printf("%s\n",label);
+      if(label[strlen(label) - 1] == ':'){
+        label[strlen(label) - 1] = '\0';
         addLabel(label, adr);
       }else{
         adr += 4;
@@ -78,32 +78,42 @@ int main(int argc, char **argv) {
   }
   
   //read from file
-  input_file = fopen( filename, "r" );
+  input_file = fopen(readFile, "r" );
+  FILE* write_file = fopen(writeFile, "wb");
   char* mnemonic;
   char* line;
-  
+
   //SECOND PASS
   if(input_file == NULL){
-    printf("Unable to open file %s\n", filename );
+    printf("Unable to open file %s\n", readFile );
   }else{
+    currAddress = 0;
     // Read each line into the buffer
     while(fgets(buffer, BUFFER_SIZE, input_file) != NULL ){
       mnemonic = strtok(buffer, " ");
-      line = strtok(NULL, "\n" );
-      int hash = 0;
-      for(int i = 0; i < 4; i++){
-        hash += ((int) mnemonic[i]) * (i+1);
-      }
+      line = strtok(NULL, "\r\n" );  
       if(mnemonic[strlen(mnemonic) - 1] != '\n'){
+        int hash = 0;
+        for(int i = 0; i < 4; i++){
+          hash += ((int) mnemonic[i]) * (i+1);
+        }
         uint32_t result = mnemonicTable[hash](hash, line);
         //TODO:output binary to file
-        printf("%i", result);
+        //printf("%i\n", result);
+        fwrite(&result,sizeof(result),1,write_file);
+        currAddress += 4;
       }
     }
     if(ferror(input_file) ){
       perror( "The following error occurred" );
+      exit(-1);
     }
-    fclose( input_file );
+    if(ferror(write_file) ){
+      perror( "The following error occurred" );
+      exit(-1);
+    }
+    fclose(input_file);
+    fclose(write_file);
   }
 
   //CLEAR SymbolTable
