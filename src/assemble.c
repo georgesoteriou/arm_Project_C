@@ -10,65 +10,52 @@
 #include "assemble_src/Branch.h"
 #include "assemble_src/special.h"
 
-
 #define BUFFER_SIZE 511
 
 typedef uint32_t (*Mnemonic)(int, char*);
-static Mnemonic mnemonicTable[1024]; 
+const char* mnemonics[23] = {
+  "add","sub","rsb","and","eor","orr","mov","tst","teq","cmp","mul","mla","ldr","str","beq","bne","bge","blt","bgt","ble","b","lsl","andeq"
+};
 
-void initMnemonicTable(){
-  mnemonicTable[597] = dataProcessing;
-  mnemonicTable[643] = dataProcessing;
-  mnemonicTable[638] = dataProcessing;
-  mnemonicTable[617] = dataProcessing;
-  mnemonicTable[665] = dataProcessing;
-  mnemonicTable[681] = dataProcessing;
-  mnemonicTable[685] = dataProcessing;
-  mnemonicTable[694] = dataProcessing;
-  mnemonicTable[657] = dataProcessing;
-  mnemonicTable[653] = dataProcessing;
-  mnemonicTable[667] = multiply;
-  mnemonicTable[616] = multiply;
-  mnemonicTable[650] = singleDataTransfer;
-  mnemonicTable[689] = singleDataTransfer;
-  mnemonicTable[639] = branch;
-  mnemonicTable[621] = branch;
-  mnemonicTable[607] = branch;
-  mnemonicTable[662] = branch;
-  mnemonicTable[652] = branch;
-  mnemonicTable[617] = branch;
-  mnemonicTable[137] = branch;
-  mnemonicTable[662] = special;
-  mnemonicTable[1021]= special;
+int mnemonicID(char* mnemonic){
+  for(int i = 0; i < 23; i++){
+    if (strcmp(mnemonics[i], mnemonic) == 0) {
+      return i;  
+    }
+  }
+  exit(-1);
 }
 
-int main(int argc, char **argv) {
-  initMnemonicTable();
+Mnemonic mnemonicFunc(int id) {
+  if(id >= SPECIAL_FUNCTION_OFFSET){
+    return special;
+  }else if(id >= BRANCH_FUNCTION_OFFSET){
+    return branch;
+  }else if(id >= SDT_FUNCTION_OFFSET){
+    return singleDataTransfer;
+  }else{
+    return dataProcessing;
+  }
+}
 
-  //assert(argc == 3);
-  const char *readFile = argv[1];
-  const char *writeFile = argv[2];
+void firstPass(char* readFile){
   char buffer[ BUFFER_SIZE ];
-
   //read from file
   FILE* input_file = fopen( readFile, "r" );
   char* label;
 
-  initSymbolTable();
-
-  //FIRST PASS
   if(input_file == NULL){
     printf("Unable to open file %s\n", readFile );
   }else{
     // Read each line into the buffer
-    int adr = 0;
+    int currAddress = 0;
     while(fgets(buffer, BUFFER_SIZE, input_file) != NULL ){
       label = strtok(buffer, "\n");
-      if(label[strlen(label) - 1] == ':'){
+      if(label != NULL && label[strlen(label) - 1] == ':'){
         label[strlen(label) - 1] = '\0';
-        addLabel(label, adr);
+        addLabel(label, currAddress);
       }else{
-        adr += 4;
+        currAddress += 4;
       }
     }
     if(ferror(input_file) ){
@@ -76,14 +63,16 @@ int main(int argc, char **argv) {
     }
     fclose(input_file);
   }
-  
+}
+
+void secondPass(char* readFile, char* writeFile){
+  char buffer[ BUFFER_SIZE ];
   //read from file
-  input_file = fopen(readFile, "r" );
+  FILE* input_file = fopen(readFile, "r" );
   FILE* write_file = fopen(writeFile, "wb");
   char* mnemonic;
   char* line;
 
-  //SECOND PASS
   if(input_file == NULL){
     printf("Unable to open file %s\n", readFile );
   }else{
@@ -91,15 +80,12 @@ int main(int argc, char **argv) {
     // Read each line into the buffer
     while(fgets(buffer, BUFFER_SIZE, input_file) != NULL ){
       mnemonic = strtok(buffer, " ");
-      line = strtok(NULL, "\r\n" );  
+      line = strtok(NULL, "\n" );
+      //If not a label
       if(mnemonic[strlen(mnemonic) - 1] != '\n'){
-        int hash = 0;
-        for(int i = 0; i < 4; i++){
-          hash += ((int) mnemonic[i]) * (i+1);
-        }
-        uint32_t result = mnemonicTable[hash](hash, line);
-        //TODO:output binary to file
-        //printf("%i\n", result);
+        int id = mnemonicID(mnemonic);
+        uint32_t result = mnemonicFunc(id)(id, line);
+        //Write binary to output file
         fwrite(&result,sizeof(result),1,write_file);
         currAddress += 4;
       }
@@ -115,8 +101,23 @@ int main(int argc, char **argv) {
     fclose(input_file);
     fclose(write_file);
   }
+}
 
+int main(int argc, char **argv) {
+  assert(argc == 3);
+
+  //INIT Symbol table
+  initSymbolTable();
+
+  const char *readFile = argv[1];
+  const char *writeFile = argv[2];
+
+  firstPass(readFile);
+
+  secondPass(readFile, write_file);
+  
   //CLEAR SymbolTable
   clearSymbolTable();
+
   return EXIT_SUCCESS;
 }

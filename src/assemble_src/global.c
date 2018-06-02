@@ -3,21 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-void initGlobalValues(void){
-  
-}
-
-uint32_t endianConversion(uint32_t bits) {
-  uint32_t mask = (1 << 8) - 1;
-  uint32_t result = (bits & mask);
-  for(int i = 0; i < 3; i++) {
-    result <<= 8;
-    bits >>= 8;
-    result += (bits & mask);
-  }
-  return result;
-}
-
 void initSymbolTable(void){
   SymbolTable = (struct SymbolNode*) (malloc( sizeof( struct SymbolNode ) ));
   SymbolTable->label = NULL;
