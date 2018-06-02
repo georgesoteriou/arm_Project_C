@@ -33,6 +33,7 @@ uint32_t b(uint32_t address){
 }
 
 typedef uint32_t (*Branch_f)(uint32_t);
+
 static Branch_f branch_fTable[] ={
   beq,  bne,  bge,  blt,  bgt,  ble,  b
 };

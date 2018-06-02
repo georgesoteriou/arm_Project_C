@@ -13,6 +13,7 @@
 #define BUFFER_SIZE 511
 
 typedef uint32_t (*Mnemonic)(int, char*);
+
 const char* mnemonics[23] = {
   "add","sub","rsb","and","eor","orr","mov","tst","teq","cmp","mul","mla","ldr","str","beq","bne","bge","blt","bgt","ble","b","lsl","andeq"
 };
