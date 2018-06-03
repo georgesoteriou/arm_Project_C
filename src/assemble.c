@@ -39,7 +39,7 @@ Mnemonic mnemonicFunc(int id) {
   }
 }
 
-void firstPass(char* readFile){
+void firstPass(const char* readFile){
   char buffer[ BUFFER_SIZE ];
   //read from file
   FILE* input_file = fopen( readFile, "r" );
@@ -66,7 +66,7 @@ void firstPass(char* readFile){
   }
 }
 
-void secondPass(char* readFile, char* writeFile){
+void secondPass(const char* readFile,const char* writeFile){
   char buffer[ BUFFER_SIZE ];
   //read from file
   FILE* input_file = fopen(readFile, "r" );
@@ -115,7 +115,7 @@ int main(int argc, char **argv) {
 
   firstPass(readFile);
 
-  secondPass(readFile, write_file);
+  secondPass(readFile, writeFile);
   
   //CLEAR SymbolTable
   clearSymbolTable();
