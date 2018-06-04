@@ -13,7 +13,7 @@ void writeData(uint32_t src, uint32_t dest){
 }
 
 void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
-  if(memAddr == 0x2020008){
+  if(memAddr == 0x20200008){
     printf("One GPIO pin from 20 to 29 has been accessed\n");
     arm.registers[regAddr] = memAddr;
   }else if(memAddr == 0x20200004){
@@ -22,6 +22,10 @@ void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
   }else if(memAddr == 0x20200000){
     printf("One GPIO pin from 0 to 9 has been accessed\n");
     arm.registers[regAddr] = memAddr;
+  }else if(memAddr == 0x20200028){
+    printf("PIN OFF\n");
+  }else if(memAddr == 0x2020001c){
+    printf("PIN ON\n");
   }else{
     if(isWithinBounds(memAddr)) {
       if(load_flag != 0) {
