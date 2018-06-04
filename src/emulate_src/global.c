@@ -1,48 +1,43 @@
 #include <stdint.h>
 #include "global.h"
 
-void initGlobalValues(void){
-  //17 resigers
-  registerSize = 17;
-  //64kB / 32 bit word = 16384 32 bit memory words
-  memorySize = 16384;
-  //PC is register 15
-  PC = 15;
-  //CPSR is register 16
-  CPSR = 16;
- 
-  //General Constants
-  nMask = (1 << 31);
-  zMask = (1 << 30);
-  cMask = (1 << 29);
-  vMask = (1 << 28);
-  
-  nBit = 31;
-  zBit = 30;
-  cBit = 29;
-  vBit = 28;
+//17 resigers
+const int registerSize = 17;
+//64kB / 32 bit word = 16384 32 bit memory words
+const int memorySize = 16384;
+//PC is register 15
+const int PC = 15;
+//CPSR is register 16
+const int CPSR = 16;
 
-  regAddrLength = 4;
-  opcodeLength = 4;
-  condLength = 4;
-  immediateLength = 8;
-  sdtOffsetLength = 12;
-  operandLength = 12;
-  branchOffsetLength = 24;
-  
-  opcodeStart = 21;
-  condStart = 28;
+//General Constants
+const int nMask = (1 << 31);
+const int zMask = (1 << 30);
+const int cMask = (1 << 29);
+const int vMask = (1 << 28);
 
-  iBit = 25;
-  sBit = 20;
-  lBit = 20;
-  aBit = 21;
-  pBit = 24;
-  uBit = 23;
+const int nBit = 31;
+const int zBit = 30;
+const int cBit = 29;
+const int vBit = 28;
 
-  
-}
+const int regAddrLength = 4;
+const int opcodeLength = 4;
+const int condLength = 4;
+const int immediateLength = 8;
+const int sdtOffsetLength = 12;
+const int operandLength = 12;
+const int branchOffsetLength = 24;
 
+const int opcodeStart = 21;
+const int condStart = 28;
+
+const int iBit = 25;
+const int sBit = 20;
+const int lBit = 20;
+const int aBit = 21;
+const int pBit = 24;
+const int uBit = 23;
 
 //Convert to and from big/small Endian
 uint32_t endianConversion(uint32_t bits) {
@@ -53,7 +48,6 @@ uint32_t endianConversion(uint32_t bits) {
     bits >>= 8;
     result += (bits & mask);
   }
-
   return result;
 }
 

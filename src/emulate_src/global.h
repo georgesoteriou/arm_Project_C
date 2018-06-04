@@ -1,44 +1,49 @@
 #include <stdint.h>
 
-//GLOBAL VARIABLES
-void initGlobalValues(void);
-int registerSize;
-int memorySize;
-int PC;
-int CPSR;
+#ifndef GLOBAL_H
+#define GLOBAL_H
 
-int nMask;
-int zMask;
-int cMask;
-int vMask;
+  //17 resigers
+  extern const int registerSize;
+  //64kB / 32 bit word = 16384 32 bit memory words
+  extern const int memorySize;
+  //PC is register 15
+  extern const int PC;
+  //CPSR is register 16
+  extern const int CPSR;
 
-int nBit;
-int zBit;
-int cBit;
-int vBit;
+  //General Constants
+  extern const int nMask;
+  extern const int zMask;
+  extern const int cMask;
+  extern const int vMask;
 
+  extern const int nBit;
+  extern const int zBit;
+  extern const int cBit;
+  extern const int vBit;
 
-int regAddrLength;
-int opcodeLength;
-int condLength;
-int immediateLength;
-int sdtOffsetLength;
-int operandLength;
-int branchOffsetLength;
+  extern const int regAddrLength;
+  extern const int opcodeLength;
+  extern const int condLength;
+  extern const int immediateLength;
+  extern const int sdtOffsetLength;
+  extern const int operandLength;
+  extern const int branchOffsetLength;
 
-int opcodeStart;
-int condStart;
+  extern const int opcodeStart;
+  extern const int condStart;
 
-int iBit;
-int sBit;
-int lBit;
-int aBit;
-int pBit;
-int uBit;
+  extern const int iBit;
+  extern const int sBit;
+  extern const int lBit;
+  extern const int aBit;
+  extern const int pBit;
+  extern const int uBit;
+#endif 
 
-uint32_t endianConversion(uint32_t);
-uint32_t selectBit(uint32_t, uint32_t);
-uint32_t selectBits(uint32_t, uint32_t, uint32_t);
+void initGlobalVariables(void);
+
 
 struct ARM {
   uint32_t registers[17];
@@ -47,6 +52,10 @@ struct ARM {
   uint32_t decodeCommand;
   uint32_t executeCommand;
 }arm;
+
+uint32_t endianConversion(uint32_t);
+uint32_t selectBit(uint32_t, uint32_t);
+uint32_t selectBits(uint32_t, uint32_t, uint32_t);
 
 uint32_t eofInst;
 

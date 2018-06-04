@@ -6,8 +6,7 @@
 #include "emulate_src/execute.h"
 #include "emulate_src/decode.h"
 
-int main(int argc, char **argv) {
-  initGlobalValues();
+int main(int argc, char **argv) { 
 
   //initialise ARM to 0
   for(int i = 0; i < 17; i++){
