@@ -8,6 +8,12 @@
 
 int main(int argc, char **argv) { 
 
+  assert(argc == 2);
+
+  //PART III GPIO PINS INIT
+  gpioOn  = 0;
+  gpioOff = 0;
+
   //initialise ARM to 0
   for(int i = 0; i < 17; i++){
     arm.registers[i] = 0;
@@ -15,8 +21,6 @@ int main(int argc, char **argv) {
   for(int i = 0; i < 2048; i++){
     arm.memory[i] = 0;
   }
-
-  assert(argc == 2);
 
   //read from file
   FILE* code;
@@ -28,17 +32,14 @@ int main(int argc, char **argv) {
   //Load program to memmory
   int counter = 0;
   while(!feof(code)) {
-    uint32_t a = fgetc(code);
-    if(a == -1) {
+    uint32_t codebyte = fgetc(code);
+    if(codebyte == -1) {
       break;
     }
-    arm.memory[counter] = a;
+    arm.memory[counter] = codebyte;
     for(int i = 0; i < 3; i++) {
       arm.memory[counter] <<= 8;
       arm.memory[counter] += fgetc(code);
-    }
-    if(arm.memory[counter] == 0) {
-      eofInst = counter;
     }
     arm.memory[counter] = endianConversion(arm.memory[counter]);
     counter++;

@@ -24,8 +24,18 @@ void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
     arm.registers[regAddr] = memAddr;
   }else if(memAddr == 0x20200028){
     printf("PIN OFF\n");
+    if(load_flag != 0) {
+      arm.registers[regAddr] = gpioOff;
+    } else {
+      gpioOff = arm.registers[regAddr];
+    }
   }else if(memAddr == 0x2020001c){
     printf("PIN ON\n");
+    if(load_flag != 0) {
+      arm.registers[regAddr] = gpioOn;
+    } else {
+      gpioOn = arm.registers[regAddr];
+    }
   }else{
     if(isWithinBounds(memAddr)) {
       if(load_flag != 0) {
@@ -68,7 +78,7 @@ void singleDataTransfer(void){
   }
 
   if(Rn == PC) {
-    arm.registers[Rd] = arm.memory[eofInst + arm.registers[PC] - 1];
+    arm.registers[Rd] = arm.memory[arm.registers[PC] + (offset >> 2)];
   } else {
     if(preindexing_flag){
       base_reg_value = calculate_address(base_reg_value, up_bit_flag, offset);

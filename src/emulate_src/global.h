@@ -53,11 +53,12 @@ struct ARM {
   uint32_t executeCommand;
 }arm;
 
+uint32_t gpioOn;
+uint32_t gpioOff;
+
 uint32_t endianConversion(uint32_t);
 uint32_t selectBit(uint32_t, uint32_t);
 uint32_t selectBits(uint32_t, uint32_t, uint32_t);
-
-uint32_t eofInst;
 
 void flagsZN(int32_t);
 
