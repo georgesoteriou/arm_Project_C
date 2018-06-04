@@ -6,7 +6,7 @@
 #include "global.h"
 
 uint32_t multiply(int hash, char* str){
-    uint32_t result = (14 << 28) + (9 << 4); //Multiply constants
+    uint32_t result = (((int32_t) 14) << 28) + (((int32_t)9) << 4); //Multiply constants
     
     char *rd = strtok(str, ", ");
     uint32_t rdVal = atoi(rd + 1) << 16;

@@ -24,3 +24,4 @@ void addLabel(char*, uint32_t);
 int32_t getAddress(char*);
 
 void clearSymbolTable(void);
+
