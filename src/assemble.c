@@ -34,6 +34,8 @@ Mnemonic mnemonicFunc(int id) {
     return branch;
   }else if(id >= SDT_FUNCTION_OFFSET){
     return singleDataTransfer;
+  }else if(id >= MULTIPLY_FUNCTION_OFFSET){
+    return multiply;
   }else{
     return dataProcessing;
   }
