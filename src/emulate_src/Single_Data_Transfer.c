@@ -13,18 +13,29 @@ void writeData(uint32_t src, uint32_t dest){
 }
 
 void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
-  if(isWithinBounds(memAddr)) {
-    if(load_flag != 0) {
-      /*if the flag is set to load, then load the data from the source
-      (memory) to the destination register*/
-      loadData(memAddr, regAddr);
+  if(memAddr == 0x2020008){
+    printf("One GPIO pin from 20 to 29 has been accessed\n");
+    arm.registers[regAddr] = memAddr;
+  }else if(memAddr == 0x20200004){
+    printf("One GPIO pin from 10 to 19 has been accessed\n");
+    arm.registers[regAddr] = memAddr;
+  }else if(memAddr == 0x20200000){
+    printf("One GPIO pin from 0 to 9 has been accessed\n");
+    arm.registers[regAddr] = memAddr;
+  }else{
+    if(isWithinBounds(memAddr)) {
+      if(load_flag != 0) {
+        /*if the flag is set to load, then load the data from the source
+        (memory) to the destination register*/
+        loadData(memAddr, regAddr);
+      } else {
+        /* if the flag is set to write, then switch the parameters for write
+        - write from Rd to memory, so dest -> src */
+        writeData(regAddr, memAddr);
+      }
     } else {
-      /* if the flag is set to write, then switch the parameters for write
-      - write from Rd to memory, so dest -> src */
-      writeData(regAddr, memAddr);
+      printf("Error: Out of bounds memory access at address 0x%08x\n", memAddr);
     }
-  } else {
-    printf("Error: Out of bounds memory access at address 0x%08x\n", memAddr);
   }
 }
 
