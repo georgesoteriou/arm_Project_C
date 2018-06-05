@@ -87,7 +87,7 @@ void decodeAddressSpecification(char* addressString, int32_t* instruction){
 
 void setLBit(int32_t *instruction, int id){
   if(id - SDT_FUNCTION_OFFSET == 0){
-    (*instruction) = 1 << 20;
+    (*instruction) += 1 << 20;
   }
 }
 
@@ -105,7 +105,7 @@ void setRdField(int32_t *instruction, int32_t Rd){
 
 uint32_t singleDataTransfer(int id, char* str){
 
-  int32_t instruction = 1 << 26, Rd = 0;
+  int32_t instruction = ((uint32_t) 1 << 26) + ((uint32_t) 14 << 28) + ((uint32_t) 1 << 23) , Rd = 0;
   
   setLBit(&instruction, id);
 
@@ -115,7 +115,7 @@ uint32_t singleDataTransfer(int id, char* str){
 
   printf("Register value:%d, address:%s\n", Rd, addressString);
   
-  decodeAddressSpecification(addressString + 1, &instruction);  
+  decodeAddressSpecification(addressString, &instruction);  
 
   return instruction;
 }
