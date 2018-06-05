@@ -48,7 +48,7 @@ void processOperand(char* operand, int32_t* result) {
    if((*operand) == '#') {
      //the opperand is an immediate value;
      //set I bit
-     //result += (1 << 25);
+     (*result) += (1 << 25);
      char* imm = operand + 1;
   
      int32_t constant;
@@ -99,7 +99,7 @@ uint32_t dataProcessing(int hash, char* str){
   if(hash <= 6) {
    //getting rd from the first argument;
    //for instructions that compute result & mov instr
-    char* rd = strtok(str, " ");
+    char* rd = strtok(str, ",");
     //getting rid of 'r' from string
     rd += 1;
     //calculating rd value
@@ -110,18 +110,18 @@ uint32_t dataProcessing(int hash, char* str){
   if(hash != 6) {
     //instructions that compute results
     //and test instructions
-    char* rn = strtok(NULL, " ");
+    char* rn = strtok(NULL, ",");
     //getting rid of 'r' from string
     rn += 1; 
 
     //calculating rn value
     result += atoi(rn);
     
-    char* operand = strtok(NULL, " ");
+    char* operand = strtok(NULL, "\0");
     processOperand(operand, &result);
   } else if(hash == 6) {
     //mov instruction
-    char* operand = strtok(NULL, " ");
+    char* operand = strtok(NULL, "\0");
     processOperand(operand, &result);
   }
 
