@@ -15,7 +15,7 @@ uint32_t multiply(int hash, char* str){
 
     result += rdVal + rmVal;
 
-    if(hash == 11) { //mul
+    if(hash == 10) { //mul
         char *rs = strtok(NULL, "\0");
         uint32_t rsVal = atoi(rs + 1) << 8;
 
