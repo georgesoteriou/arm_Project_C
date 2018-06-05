@@ -7,8 +7,8 @@
 #include <ctype.h>
 
 void numericalConstant(char* addressString, int32_t* instruction){
-  int32_t address = (int32_t) strtol(addressString, NULL, 0);
-  fprintf(stdout, "constant value: %d\n", address);
+  //int32_t address = (int32_t) strtol(addressString, NULL, 0);
+  //fprintf(stdout, "constant value: %d\n", address);
 }
 
 void preIndexed(int32_t* instruction){
@@ -27,7 +27,7 @@ void registerInstruction(char* addressString, int32_t* instruction){
     char* RnString = malloc(sizeof(char) * (count));
     strncpy(RnString, addressString, count);
     int32_t Rn = atoi(RnString);
-    fprintf(stdout, "RnString: %s\n", RnString);
+    //fprintf(stdout, "RnString: %s\n", RnString);
     free(RnString);
     int32_t offset = 0;
     //skip Rn and the separator
@@ -52,7 +52,7 @@ void registerInstruction(char* addressString, int32_t* instruction){
           addressString++;
         }
         offset = atoi(addressString);
-        fprintf(stdout, "offset: %d\n", offset);
+        //fprintf(stdout, "offset: %d\n", offset);
       }
     } else {
       //pre-indexed register with offset != 0
@@ -64,7 +64,7 @@ void registerInstruction(char* addressString, int32_t* instruction){
       strncpy(offsetString, addressString, strlen(addressString) - 1);
       offset = atoi(offsetString);
       free(offsetString);
-      fprintf(stdout, "lol offset: %d\n", offset);
+      //fprintf(stdout, "lol offset: %d\n", offset);
       preIndexed(instruction);
     }
     (*instruction) += Rn << 16;
@@ -113,7 +113,7 @@ uint32_t singleDataTransfer(int id, char* str){
 
   setRdField(&instruction, Rd);
 
-  printf("Register value:%d, address:%s\n", Rd, addressString);
+  //fprintf("Register value:%d, address:%s\n", Rd, addressString);
   
   decodeAddressSpecification(addressString, &instruction);  
 

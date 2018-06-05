@@ -29,6 +29,21 @@ uint32_t getData(void){
   free(curr);
   return data;
 }
+void clearLDRTableHelper(struct LDRNode* head){
+  if(head->next != NULL){
+    clearLDRTableHelper(head->next);
+  }
+  free(head);
+}
+
+void clearLDRTable(void){
+  if(LDRTable != NULL){
+    if(LDRTable->next != NULL){
+      clearLDRTableHelper(LDRTable->next);
+    }
+    free(LDRTable);
+  }
+}
 
 
 

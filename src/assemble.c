@@ -64,7 +64,7 @@ void firstPass(const char* readFile){
     if(ferror(input_file) ){
       perror( "The following error occurred" );
     }
-    printf("%i", currAddress);
+    //TODO: SAVE CURRADRESS TO GLOBAL!!!!!
     fclose(input_file);
   }
 }
@@ -134,6 +134,7 @@ int main(int argc, char **argv) {
   
   //CLEAR SymbolTable
   clearSymbolTable();
+  clearLDRTable();
 
   return EXIT_SUCCESS;
 }

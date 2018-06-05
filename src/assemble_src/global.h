@@ -19,6 +19,8 @@ void addData(uint32_t);
 
 uint32_t getData(void);
 
+void clearLDRTable(void);
+
 
 //SYMBOL LINKED LIST
 struct SymbolNode{
