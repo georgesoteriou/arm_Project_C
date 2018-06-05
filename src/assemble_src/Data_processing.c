@@ -45,10 +45,13 @@ int isValid(int32_t imm) {
 }
 
 void processOperand(char* operand, int32_t* result) {
+  while((*operand) == ' '){
+    operand++;
+  }
   if((*operand) == '#') {
     //the opperand is an immediate value;
     //set I bit
-    (*result) += (1 << 25);
+    (*result) += (((int32_t) 1) << 25);
     char* imm = operand + 1;
 
     int32_t constant;

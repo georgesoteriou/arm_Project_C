@@ -65,6 +65,7 @@ void firstPass(const char* readFile){
       perror( "The following error occurred" );
     }
     //TODO: SAVE CURRADRESS TO GLOBAL!!!!!
+    endOfInst = currAddress;
     fclose(input_file);
   }
 }

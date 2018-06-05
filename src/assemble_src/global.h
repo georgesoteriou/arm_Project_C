@@ -6,6 +6,7 @@
 #define SPECIAL_FUNCTION_OFFSET 21
 
 uint32_t currAddress;
+uint32_t endOfInst;
 
 //LDR LINKED LIST
 struct LDRNode{

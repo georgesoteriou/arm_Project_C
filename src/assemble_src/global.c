@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+//LDR List
 struct LDRNode* LDRTable;
 
 void initLDRTable(void){
@@ -46,11 +47,8 @@ void clearLDRTable(void){
 }
 
 
-
-
+//Label Symbol linked list
 struct SymbolNode* SymbolTable;
-
-
 
 void initSymbolTable(void){
   SymbolTable = (struct SymbolNode*) (malloc( sizeof( struct SymbolNode ) ));
