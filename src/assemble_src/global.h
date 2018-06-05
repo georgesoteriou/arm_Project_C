@@ -5,17 +5,27 @@
 #define BRANCH_FUNCTION_OFFSET 14
 #define SPECIAL_FUNCTION_OFFSET 21
 
-uint32_t endianConversion(uint32_t bits);
+uint32_t currAddress;
 
+//LDR LINKED LIST
+struct LDRNode{
+  uint32_t data;
+  struct LDRNode* next;
+};
+
+void initLDRTable(void);
+
+void addData(uint32_t);
+
+uint32_t getData(void);
+
+
+//SYMBOL LINKED LIST
 struct SymbolNode{
   char* label;
   uint32_t address;
   struct SymbolNode* next;
 };
-
-uint32_t currAddress;
-
-struct SymbolNode* SymbolTable;
 
 void initSymbolTable(void);
 
@@ -24,4 +34,7 @@ void addLabel(char*, uint32_t);
 int32_t getAddress(char*);
 
 void clearSymbolTable(void);
+
+
+
 

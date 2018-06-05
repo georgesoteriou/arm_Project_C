@@ -3,6 +3,40 @@
 #include <stdlib.h>
 #include <string.h>
 
+struct LDRNode* LDRTable;
+
+void initLDRTable(void){
+  LDRTable = (struct LDRNode*) (malloc( sizeof( struct LDRNode ) ));
+  LDRTable->data = 0;
+  LDRTable->next = NULL;
+}
+
+void addData(uint32_t data){
+  struct LDRNode* curr = LDRTable;
+  while(curr->data != 0){
+    curr = curr->next;
+  }
+  curr->next = (struct LDRNode*) (malloc( sizeof( struct LDRNode ) ));
+  curr->next->data = 0;
+  curr->next->next = NULL;
+  curr->data = data;
+}
+
+uint32_t getData(void){
+  struct LDRNode* curr = LDRTable;
+  uint32_t data = curr->data;
+  LDRTable = LDRTable->next;
+  free(curr);
+  return data;
+}
+
+
+
+
+struct SymbolNode* SymbolTable;
+
+
+
 void initSymbolTable(void){
   SymbolTable = (struct SymbolNode*) (malloc( sizeof( struct SymbolNode ) ));
   SymbolTable->label = NULL;

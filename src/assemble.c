@@ -64,11 +64,13 @@ void firstPass(const char* readFile){
     if(ferror(input_file) ){
       perror( "The following error occurred" );
     }
+    printf("%i", currAddress);
     fclose(input_file);
   }
 }
 
 void secondPass(const char* readFile,const char* writeFile){
+  //initData();
   char buffer[ BUFFER_SIZE ];
   //read from file
   FILE* input_file = fopen(readFile, "r" );
@@ -101,6 +103,16 @@ void secondPass(const char* readFile,const char* writeFile){
       perror( "The following error occurred" );
       exit(-1);
     }
+    
+
+    //Print LDR extra data after 0 command
+    uint32_t data = getData();
+    while(data != 0){
+      fwrite(&data,sizeof(data),1,write_file);
+      data = getData();
+    }
+
+      
     fclose(input_file);
     fclose(write_file);
   }
@@ -111,6 +123,7 @@ int main(int argc, char **argv) {
 
   //INIT Symbol table
   initSymbolTable();
+  initLDRTable();
 
   const char *readFile = argv[1];
   const char *writeFile = argv[2];
