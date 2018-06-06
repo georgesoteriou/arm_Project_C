@@ -8,6 +8,8 @@
 uint32_t currAddress;
 uint32_t endOfInst;
 
+char* removeSpaces(char*);
+
 //LDR LINKED LIST
 struct LDRNode{
   uint32_t data;

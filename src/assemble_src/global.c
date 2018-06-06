@@ -3,6 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+char* removeSpaces(char *str) {
+  //Remove Spaces
+  while((*str) == ' '){
+    str++;
+  }
+  return str;
+}
+
 //LDR List
 struct LDRNode* LDRTable;
 
