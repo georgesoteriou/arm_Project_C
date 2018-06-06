@@ -45,6 +45,7 @@ int isValid(int32_t imm) {
 }
 
 void processOperand(char* operand, int32_t* result) {
+  //Remove Spaces
   while((*operand) == ' '){
     operand++;
   }
@@ -81,151 +82,73 @@ void processOperand(char* operand, int32_t* result) {
       (*result) += rotateLeft(constant, 2 * rotationNum);  
     }
   } else {
-    //the operand is a shifted register
-    //optional
+    //the operand is a register
     operand++;
     (*result) += (int32_t) atoi(operand);
   }
 }
 
-int32_t add(char* str){
+int32_t getRd(char* rd){
+  //getting rid of 'r' from string
+  rd += 1;
+  //shift rd value to position in result
+  return (((int32_t) atoi(rd)) << 12);
+}
+
+int32_t getRn(char* rn){
+  //getting rid of 'r' from string
+  rn += 1; 
+  //shift rn value to position in result
+  return (((int32_t) atoi(rn)) << 16);
+}
+
+int32_t get3parameters(char* str){
   int32_t result = 0;
   //getting rd from the first argument;
   char* rd = strtok(str, ",");
-  //getting rid of 'r' from string
-  rd += 1;
-  //calculating rd value
-  result += (((int32_t) atoi(rd)) << 12);
+  result += getRd(rd);
 
-
+  //getting rn from the second argument;
   char* rn = strtok(NULL, ",");
-  //getting rid of 'r' from string
-  rn += 1; 
-
-  //calculating rn value
-  result += (((int32_t) atoi(rn)) << 16);
+  result += getRn(rn);
   
+  //getting operand from the third argument;
   char* operand = strtok(NULL, "\0");
   processOperand(operand, &result);
   return result;
+}
+
+int32_t add(char* str){
+  return get3parameters(str);
 }
 
 int32_t sub(char* str){
-  int32_t result = 0;
-  //getting rd from the first argument;
-  char* rd = strtok(str, ",");
-  //getting rid of 'r' from string
-  rd += 1;
-  //calculating rd value
-  result += (atoi(rd) << 12);
-
-  char* rn = strtok(NULL, ",");
-  //getting rid of 'r' from string
-  rn += 1; 
-
-  //calculating rn value
-  result += (((int32_t) atoi(rn)) << 16);
-  
-  char* operand = strtok(NULL, "\0");
-  processOperand(operand, &result);
-  return result;
+  return get3parameters(str);
 }
 
 int32_t rsb(char* str){
-  int32_t result = 0;
-  //getting rd from the first argument;
-  char* rd = strtok(str, ",");
-  //getting rid of 'r' from string
-  rd += 1;
-  //calculating rd value
-  result += (atoi(rd) << 12);
-
-
-  char* rn = strtok(NULL, ",");
-  //getting rid of 'r' from string
-  rn += 1; 
-
-  //calculating rn value
-  result += (((int32_t) atoi(rn)) << 16);
-  
-  char* operand = strtok(NULL, "\0");
-  processOperand(operand, &result);
-  return result;
+  return get3parameters(str);
 }
 
 int32_t and(char* str){
-  int32_t result = 0;
-  //getting rd from the first argument;
-  char* rd = strtok(str, ",");
-  //getting rid of 'r' from string
-  rd += 1;
-  //calculating rd value
-  result += (atoi(rd) << 12);
-
-
-  char* rn = strtok(NULL, ",");
-  //getting rid of 'r' from string
-  rn += 1; 
-
-  //calculating rn value
-  result += (((int32_t) atoi(rn)) << 16);
-  
-  char* operand = strtok(NULL, "\0");
-  processOperand(operand, &result);
-  return result;
+  return get3parameters(str);
 }
 
 int32_t eor(char* str){
-  int32_t result = 0;
-  //getting rd from the first argument;
-  char* rd = strtok(str, ",");
-  //getting rid of 'r' from string
-  rd += 1;
-  //calculating rd value
-  result += (atoi(rd) << 12);
-
-  char* rn = strtok(NULL, ",");
-  //getting rid of 'r' from string
-  rn += 1; 
-
-  //calculating rn value
-  result += (((int32_t) atoi(rn)) << 16);
-  
-  char* operand = strtok(NULL, "\0");
-  processOperand(operand, &result);
-  return result;
+  return get3parameters(str);
 }
 
 int32_t orr(char* str){
-  int32_t result = 0;
-  //getting rd from the first argument;
-  char* rd = strtok(str, ",");
-  //getting rid of 'r' from string
-  rd += 1;
-  //calculating rd value
-  result += (atoi(rd) << 12);
-
-  char* rn = strtok(NULL, ",");
-  //getting rid of 'r' from string
-  rn += 1; 
-
-  //calculating rn value
-  result += (((int32_t) atoi(rn)) << 16);
-  
-  char* operand = strtok(NULL, "\0");
-  processOperand(operand, &result);
-  return result;
+  return get3parameters(str);
 }
 
 int32_t mov(char* str){
   int32_t result = 0;
   //getting rd from the first argument;
   char* rd = strtok(str, ",");
-  //getting rid of 'r' from string
-  rd += 1;
-  //calculating rd value
-  result += (atoi(rd) << 12);
+  result += getRd(rd);
 
+  //get operand
   char* operand = strtok(NULL, "\0");
   processOperand(operand, &result);
   return result;
@@ -233,14 +156,11 @@ int32_t mov(char* str){
 
 int32_t tst(char* str){
   int32_t result = 0;
+  //set bit 20
   result += (1 << 20);
 
   char* rn = strtok(str, ",");
-  //getting rid of 'r' from string
-  rn += 1; 
-
-  //calculating rn value
-  result += (((int32_t) atoi(rn)) << 16);
+  result += getRn(rn);
   
   char* operand = strtok(NULL, "\0");
   processOperand(operand, &result);
@@ -249,14 +169,11 @@ int32_t tst(char* str){
 
 int32_t teq(char* str){
   int32_t result = 0;
+  //set bit 20
   result += (1 << 20);
 
   char* rn = strtok(str, ",");
-  //getting rid of 'r' from string
-  rn += 1; 
-
-  //calculating rn value
-  result += (((int32_t) atoi(rn)) << 16);
+  result += getRn(rn);
   
   char* operand = strtok(NULL, "\0");
   processOperand(operand, &result);
@@ -265,14 +182,11 @@ int32_t teq(char* str){
 
 int32_t cmp(char* str){
   int32_t result = 0;
+  //set bit 20
   result += (1 << 20);
 
   char* rn = strtok(str, ",");
-  //getting rid of 'r' from string
-  rn += 1; 
-
-  //calculating rn value
-  result += (((int32_t) atoi(rn)) << 16);
+  result += getRn(rn);
   
   char* operand = strtok(NULL, "\0");
   processOperand(operand, &result);
