@@ -1,4 +1,5 @@
 #This the the canonical lab .gitignore file
+.gitignore
 
 #ignore temp files
 *~
@@ -34,3 +35,7 @@ assemble
 *.toc
 
 .vscode/*
+src/facc
+src/hash
+src/facc.s
+src/out
