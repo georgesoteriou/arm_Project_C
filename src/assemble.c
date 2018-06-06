@@ -52,19 +52,20 @@ void firstPass(const char* readFile){
   }else{
     // Read each line into the buffer
     int currAddress = 0;
-    while(fgets(buffer, BUFFER_SIZE, input_file) != NULL ){
+    char* line = fgets(buffer, BUFFER_SIZE, input_file);
+    while(line != NULL ){
       label = strtok(buffer, "\n");
       if(label != NULL && label[strlen(label) - 1] == ':'){
         label[strlen(label) - 1] = '\0';
         addLabel(label, currAddress);
-      }else{
+      }else if((*line) != '\n') {
         currAddress += 4;
       }
+      line = fgets(buffer, BUFFER_SIZE, input_file);
     }
     if(ferror(input_file) ){
       perror( "The following error occurred" );
     }
-    //TODO: SAVE CURRADRESS TO GLOBAL!!!!!
     endOfInst = currAddress;
     fclose(input_file);
   }
