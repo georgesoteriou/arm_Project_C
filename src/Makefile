@@ -22,8 +22,15 @@ clean:
 	rm -f $(EMULATE_OBJECTS)
 	rm -f assemble
 	rm -f emulate
+	rm -f out
 
 test:
 	make
 	@echo "Make sure arm11_1718_testsuite is cloned in the same directory as arm11_TEAMNUMBER"
 	ruby ../../arm11_1718_testsuite/testserver.rb .
+
+gdb:
+	make
+	@echo "Make sure arm11_1718_testsuite is cloned in the same directory as arm11_TEAMNUMBER"
+	@echo "use like this: make gdb what=(assemble/emulate) test=NAME_OF_TEST.s"
+	gdb --args $(what) ../../arm11_1718_testsuite/test_cases/$(test) out
