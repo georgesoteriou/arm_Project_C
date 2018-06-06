@@ -30,6 +30,8 @@ uint32_t lsl(char* str){
     str++;
   }
   
+  //Getting rn and setting it as rd
+  //and as shifted register
   char* r = strtok(str, ",");
   int32_t rd = atoi(r + 1) << 12;
   int32_t rn = atoi(r + 1);
@@ -37,6 +39,7 @@ uint32_t lsl(char* str){
   result += rd;
   result += rn;
 
+  //getting shitft ammount
   int32_t num = 0;
   char* constant = strtok(NULL, "\0");
   constant += 1;

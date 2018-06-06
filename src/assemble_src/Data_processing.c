@@ -1,4 +1,5 @@
 #include "Data_Processing.h"
+#include "global.h"
 #include <string.h>
 #include <stdlib.h>
 uint32_t opcodeTable[10] = {4, 2, 3, 0, 1, 12, 13, 8, 9, 10};
@@ -44,11 +45,18 @@ int isValid(int32_t imm) {
   }
 }
 
-void processOperand(char* operand, int32_t* result) {
-  //Remove Spaces
-  while((*operand) == ' '){
-    operand++;
+const char* shiftTable[4] = {"lsl", "lsr", "asr", "ror"};
+
+int shiftID(char* shift){
+  for(int i = 0; i < 4; i++){
+    if (strcmp(shiftTable[i], shift) == 0) {
+      return i;  
+    }
   }
+  exit(-1);
+}
+
+void processOperand(char* operand, int32_t* result) {
   if((*operand) == '#') {
     //the opperand is an immediate value;
     //set I bit
@@ -56,7 +64,7 @@ void processOperand(char* operand, int32_t* result) {
     char* imm = operand + 1;
 
     int32_t constant;
-
+    
     if(checkImmType(imm) == 1) {
       constant = strtol(imm + 2, &imm, 16);      
     } else {
@@ -84,7 +92,41 @@ void processOperand(char* operand, int32_t* result) {
   } else {
     //the operand is a register
     operand++;
-    (*result) += (int32_t) atoi(operand);
+
+    char* checkComma = strchr(operand, ',');
+    if(checkComma == NULL) {
+      (*result) += (int32_t) atoi(operand);
+    } else {
+      char* r = strtok(operand, ",");
+      r = removeSpaces(r);
+      (*result) += (int32_t) atoi(r + 1);
+      
+      //getting shift type
+      char* shiftType = strtok(NULL, " ");
+      shiftType = removeSpaces(shiftType);
+      int32_t shift = shiftID(shiftType); 
+      (*result) += (shift << 5);
+
+      //getting shift ammount
+      char* constant = strtok(NULL, "\0");
+      constant = removeSpaces(constant);
+      if((*constant) == '#') {
+        //register is shifted by constant ammount
+        int32_t num;
+        if(checkImmType(constant + 1) == 0) {
+           num = (atoi(constant + 1) & ((1 << 5) - 2)) << 7;
+        } else {
+           num = ((strtol(constant + 3, NULL, 16)) & ((1 << 5) - 2)) << 7;
+        }
+      } else {
+        //register is shifted by the bottom byte of a register
+        (*result) += (1 << 4);
+        int32_t rs = atoi(constant + 1) << 8;
+        (*result) += rs;
+      }
+      
+    }
+
   }
 }
 
@@ -106,14 +148,17 @@ int32_t get3parameters(char* str){
   int32_t result = 0;
   //getting rd from the first argument;
   char* rd = strtok(str, ",");
+  rd = removeSpaces(rd);
   result += getRd(rd);
 
   //getting rn from the second argument;
   char* rn = strtok(NULL, ",");
+  rn = removeSpaces(rn);
   result += getRn(rn);
   
   //getting operand from the third argument;
   char* operand = strtok(NULL, "\0");
+  operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
@@ -146,10 +191,12 @@ int32_t mov(char* str){
   int32_t result = 0;
   //getting rd from the first argument;
   char* rd = strtok(str, ",");
+  rd = removeSpaces(rd);
   result += getRd(rd);
 
   //get operand
   char* operand = strtok(NULL, "\0");
+  operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
@@ -160,9 +207,11 @@ int32_t tst(char* str){
   result += (1 << 20);
 
   char* rn = strtok(str, ",");
+  rn = removeSpaces(rn);
   result += getRn(rn);
   
   char* operand = strtok(NULL, "\0");
+  operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
@@ -173,9 +222,11 @@ int32_t teq(char* str){
   result += (1 << 20);
 
   char* rn = strtok(str, ",");
+  rn = removeSpaces(rn);
   result += getRn(rn);
   
   char* operand = strtok(NULL, "\0");
+  operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
@@ -186,9 +237,11 @@ int32_t cmp(char* str){
   result += (1 << 20);
 
   char* rn = strtok(str, ",");
+  rn = removeSpaces(rn);
   result += getRn(rn);
   
   char* operand = strtok(NULL, "\0");
+  operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
@@ -211,6 +264,7 @@ const data_f data_fTable[10] = {
 
 uint32_t dataProcessing(int hash, char* str){
   int32_t result = 0;
+  str = removeSpaces(str);
   //setting cond
   result = ((int32_t) 14) << 28;
   //setting the opcode
