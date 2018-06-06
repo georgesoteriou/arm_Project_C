@@ -99,7 +99,7 @@ void processOperand(char* operand, int32_t* result) {
     } else {
       char* r = strtok(operand, ",");
       r = removeSpaces(r);
-      (*result) += (int32_t) atoi(r + 1);
+      (*result) += (int32_t) atoi(r);
       
       //getting shift type
       char* shiftType = strtok(NULL, " ");
@@ -118,6 +118,7 @@ void processOperand(char* operand, int32_t* result) {
         } else {
            num = ((strtol(constant + 3, NULL, 16)) & ((1 << 5) - 2)) << 7;
         }
+        (*result) += num;
       } else {
         //register is shifted by the bottom byte of a register
         (*result) += (1 << 4);
