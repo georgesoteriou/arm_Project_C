@@ -107,3 +107,4 @@ void clearSymbolTable(void){
   free(SymbolTable);
 }
 
+

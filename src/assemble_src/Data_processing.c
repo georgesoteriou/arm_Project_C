@@ -1,9 +1,6 @@
 #include "Data_Processing.h"
-#include "global.h"
 #include <string.h>
 #include <stdlib.h>
-#include <stdint.h>
-
 uint32_t opcodeTable[10] = {4, 2, 3, 0, 1, 12, 13, 8, 9, 10};
 
 //returns 1 for hex and 0 for binary
@@ -48,7 +45,10 @@ int isValid(int32_t imm) {
 }
 
 void processOperand(char* operand, int32_t* result) {
-
+  //Remove Spaces
+  while((*operand) == ' '){
+    operand++;
+  }
   if((*operand) == '#') {
     //the opperand is an immediate value;
     //set I bit
@@ -106,17 +106,14 @@ int32_t get3parameters(char* str){
   int32_t result = 0;
   //getting rd from the first argument;
   char* rd = strtok(str, ",");
-  rd = removeSpaces(rd);
   result += getRd(rd);
 
   //getting rn from the second argument;
   char* rn = strtok(NULL, ",");
-  rn = removeSpaces(rn);
   result += getRn(rn);
   
   //getting operand from the third argument;
   char* operand = strtok(NULL, "\0");
-  operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
@@ -149,12 +146,10 @@ int32_t mov(char* str){
   int32_t result = 0;
   //getting rd from the first argument;
   char* rd = strtok(str, ",");
-  rd = removeSpaces(rd);
   result += getRd(rd);
 
   //get operand
   char* operand = strtok(NULL, "\0");
-  operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
@@ -165,11 +160,9 @@ int32_t tst(char* str){
   result += (1 << 20);
 
   char* rn = strtok(str, ",");
-  rn = removeSpaces(rn);
   result += getRn(rn);
   
   char* operand = strtok(NULL, "\0");
-  operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
@@ -180,11 +173,9 @@ int32_t teq(char* str){
   result += (1 << 20);
 
   char* rn = strtok(str, ",");
-  rn = removeSpaces(rn);
   result += getRn(rn);
   
   char* operand = strtok(NULL, "\0");
-  operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
@@ -195,11 +186,9 @@ int32_t cmp(char* str){
   result += (1 << 20);
 
   char* rn = strtok(str, ",");
-  rn = removeSpaces(rn);
   result += getRn(rn);
   
   char* operand = strtok(NULL, "\0");
-  operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
@@ -226,6 +215,5 @@ uint32_t dataProcessing(int hash, char* str){
   result = ((int32_t) 14) << 28;
   //setting the opcode
   result += (int32_t) (opcodeTable[hash] << 21);
-  str = removeSpaces(str);
   return result + data_fTable[hash](str);
 }
