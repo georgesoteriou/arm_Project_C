@@ -11,6 +11,18 @@ void setRdField(int32_t *instruction, int32_t Rd){
   (*instruction) += Rd << 12;
 }
 
+void setCond(int32_t* instruction){
+  (*instruction) += ((uint32_t) 14 << 28);
+}
+
+void setUBit(int32_t* instruction){
+  (*instruction) +=  1 << 23;
+}
+
+void set01bits(int32_t* instruction){
+  (*instruction) += 1 << 26;
+}
+
 int32_t SDTmov(int32_t Rd, int32_t address){
   int32_t instruction = (((int32_t) 14) << 28) + (((int32_t) 1) << 25) + (((int32_t) 13) << 21);
   instruction += address;
@@ -22,6 +34,7 @@ void numericalConstant(int32_t Rd, char* addressString, int32_t* instruction){
   int32_t address = (int32_t) strtol(addressString, NULL, 0);
   if(address < 255){
     *instruction =  SDTmov(Rd, address);
+    setRdField(instruction, Rd);
   } else {
     addData(address);
     int32_t Rn = 15;
@@ -37,6 +50,10 @@ void numericalConstant(int32_t Rd, char* addressString, int32_t* instruction){
 
 void preIndexed(int32_t* instruction){
   (*instruction) += 1 << 24;
+}
+
+void setIBit(int32_t* instruction){
+  (*instruction) += 1 << 25;
 }
 
 void registerInstruction(char* addressString, int32_t* instruction){
@@ -57,23 +74,27 @@ void registerInstruction(char* addressString, int32_t* instruction){
     //skip Rn and the separator
     addressString += count;
     //int32_t offset = 0;
-    while(*addressString == ' '){
-      addressString++;
-    }
+    addressString = removeSpaces(addressString);
     if(*addressString == ']'){
       //pre-indexed register with offset 0 or post-indexed register
-      while(*addressString == ' '){
-        addressString++;
-      }
+      addressString = removeSpaces(addressString);
       if(*(addressString + 1) != ','){
         //pre-indexed register with offset 0
+        setUBit(instruction);
         offset = 0;
         preIndexed(instruction);
       } else {
         //post-indexed register
         //fprintf(stdout, "got here 3\n");
-        while(!isdigit(*addressString)){
+
+        while(!isdigit(*addressString) && (*addressString) != '-'){
           addressString++;
+        }
+
+        if((*addressString) == '-'){
+          addressString++;
+        } else {
+          setUBit(instruction);
         }
 
         offset = (int32_t) strtol(addressString, NULL, 0);
@@ -81,16 +102,73 @@ void registerInstruction(char* addressString, int32_t* instruction){
       }
     } else {
       //pre-indexed register with offset != 0
-      while(!isdigit(*addressString)){
-        addressString++;
-      }
+      preIndexed(instruction);
+      addressString++;
+      addressString = removeSpaces(addressString);
+      if(*addressString == '#'){
+      while(!isdigit(*addressString) && (*addressString) != '-'){
+          addressString++;
+        }
+
+        if((*addressString) == '-'){
+          addressString++;
+        } else {
+          setUBit(instruction);
+        }
+
       //copy the content, without the last character (it is ']')
       char* offsetString = malloc(sizeof(char) * (strlen(addressString) - 1));
       strncpy(offsetString, addressString, strlen(addressString) - 1);
       offset = (int32_t) strtol(offsetString, NULL, 0);
       free(offsetString);
       //fprintf(stdout, "lol offset: %d\n", offset);
-      preIndexed(instruction);
+    } else {
+      setIBit(instruction);
+      int32_t Rm = 0;
+      if(strchr(addressString, ',')){
+        //it means the instruction contains a shift as well
+        char* RmString = strtok(addressString, ",");
+        RmString = removeSpaces(RmString);
+        if((*RmString) == '-'){
+          fprintf(stdout, "negative\n");
+          RmString++;
+        } else {
+          setUBit(instruction);
+        }
+        Rm = atoi(RmString + 1);
+        //last 4 bits of the offset are Rm
+        offset = Rm;
+        char* shiftType = strtok(NULL, " ");
+        //bits 5 and 6 are the shiftType
+        offset += (shiftID(shiftType)) << 5;
+        addressString = strtok(NULL, "");
+        addressString++;
+        addressString = removeSpaces(addressString);
+        char* amountString = malloc(sizeof(char) * (strlen(addressString) - 1));
+        strncpy(amountString, addressString, strlen(addressString) - 1);
+        int32_t amount = atoi(amountString);
+        //the bits 11-7 of the offset are the amount
+        offset += amount << 7;
+        //fprintf(stdout, "Rn: %d, Rm: %d, shiftType: %s, amount: %d\n", Rn, Rm, shiftType, amountString);
+        
+      } else {
+        //it means it's only Rm with an ending ']'
+        if(*addressString == '-'){
+          addressString++;
+          //fprintf(stdout, "negative\n");
+        } else {
+          setUBit(instruction);
+        }
+        addressString = removeSpaces(addressString);
+        //jumping over the R
+        addressString++;
+        char* RmString = malloc(sizeof(char) * (strlen(addressString) - 1)); 
+        strncpy(RmString, addressString, strlen(addressString) - 1);
+        Rm = atoi(RmString);
+        offset = Rm;
+        // fprintf(stdout, "Rn: %d, Rm: %s",Rn,  RmString);
+      }
+    }
     }
     (*instruction) += Rn << 16;
     (*instruction) += offset;
@@ -101,7 +179,13 @@ void decodeAddressSpecification(int32_t Rd, char* addressString, int32_t* instru
     /*numeric constant, so ignore the first character and convert from
     a hex string to int*/
     preIndexed(instruction);
-    numericalConstant(Rd, addressString + 1, instruction);
+    if(*(addressString + 1) == '-'){
+      addressString += 2;
+    } else {
+      setUBit(instruction);
+      addressString += 1;
+    }
+    numericalConstant(Rd, addressString, instruction);
   } else {
     /*if the first character is not =, then it is obviously [, so the function
     will check for the other keys & skip the chars [r -> += 2 */
@@ -123,24 +207,11 @@ char* splitInstruction(int32_t *Rd, char* str){
   return strtok(NULL, "");
 }
 
-void setCond(int32_t* instruction){
-  (*instruction) += ((uint32_t) 14 << 28);
-}
-
-void setUBit(int32_t* instruction){
-  (*instruction) +=  1 << 23;
-}
-
-void set01bits(int32_t* instruction){
-  (*instruction) += 1 << 26;
-}
-
 uint32_t singleDataTransfer(int id, char* str){
 
   int32_t instruction = 0;
 
   setCond(&instruction);
-  setUBit(&instruction);
   set01bits(&instruction);
   setLBit(&instruction, id);
 
