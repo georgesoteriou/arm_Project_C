@@ -23,6 +23,7 @@ clean:
 	rm -f assemble
 	rm -f emulate
 	rm -f out
+	rm -f extension/extension
 
 test:
 	make
