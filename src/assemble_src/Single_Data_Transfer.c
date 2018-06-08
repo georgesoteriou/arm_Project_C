@@ -7,6 +7,14 @@
 #include "global.h"
 #include <ctype.h>
 
+//TO DO: CHECK IN SHIFTED REGISTERS IF THE FIRST ONE IS NEGATIVE FOR BOTH CASES
+//TO DO: REWRITE THE MALLOC THINGY WITH '\0' IN THE END
+//TO DO: MAKE A FUNCTION FOR CHECK NEGATIVE
+//TO DO: REMOVE NASTY ']' FOR THE SECOND CASE
+//TO DO: SEE THE SEPARATORS THING AND MAKE IT WITH STRTOK
+//TO DO: MAKE FUNCTION FOR SPLITTING THE TEXT
+//TO DO: GET RID OF MAGIC NUMBERS, REFACTOR EVEN MORE IF POSSIBLE
+
 void setRdField(int32_t *instruction, int32_t Rd){
   (*instruction) += Rd << 12;
 }
@@ -21,6 +29,24 @@ void setUBit(int32_t* instruction){
 
 void set01bits(int32_t* instruction){
   (*instruction) += 1 << 26;
+}
+
+void preIndexed(int32_t* instruction){
+  (*instruction) += 1 << 24;
+}
+
+void setIBit(int32_t* instruction){
+  (*instruction) += 1 << 25;
+}
+
+void setLBit(int32_t *instruction, int id){
+  if(id - SDT_FUNCTION_OFFSET == 0){
+    (*instruction) += (((int32_t) 1) << 20);
+  }
+}
+
+void setRnField(int32_t* instruction, int32_t Rn){
+  (*instruction) += Rn << 16;
 }
 
 int32_t SDTmov(int32_t Rd, int32_t address){
@@ -48,12 +74,87 @@ void numericalConstant(int32_t Rd, char* addressString, int32_t* instruction){
   //fprintf(stdout, "constant value: %d\n", address);
 }
 
-void preIndexed(int32_t* instruction){
-  (*instruction) += 1 << 24;
+void baseRegisterOffsetZero(int32_t* instruction){
+  setUBit(instruction);
+  preIndexed(instruction);
 }
 
-void setIBit(int32_t* instruction){
-  (*instruction) += 1 << 25;
+void postIndexingNonShiftedRegister(char* addressString, int32_t* instruction){
+  while(!isdigit(*addressString) && (*addressString) != '-'){
+    addressString++;
+  }
+  if((*addressString) == '-'){
+    addressString++;
+  } else {
+    setUBit(instruction);
+  }
+  int32_t offset = (int32_t) strtol(addressString, NULL, 0);
+  (*instruction) += offset;
+}
+
+void preIndexingNonShiftedRegister(char* addressString, int32_t* instruction){
+  while(!isdigit(*addressString) && (*addressString) != '-'){
+    addressString++;
+  }
+  if((*addressString) == '-'){
+    addressString++;
+  } else {
+    setUBit(instruction);
+  }
+   //copy the content, without the last character (it is ']')
+  char* offsetString = malloc(sizeof(char) * (strlen(addressString) - 1));
+  strncpy(offsetString, addressString, strlen(addressString) - 1);
+  int32_t offset = (int32_t) strtol(offsetString, NULL, 0);
+  free(offsetString);
+  (*instruction) += offset;
+}
+
+void shiftedRegister(char* addressString, int32_t* instruction){
+  setIBit(instruction);
+  int32_t Rm = 0, offset = 0;
+  if(strchr(addressString, ',')){
+    //it means the instruction contains a shift as well
+    char* RmString = strtok(addressString, ",");
+    RmString = removeSpaces(RmString);
+    if((*RmString) == '-'){
+      //fprintf(stdout, "negative\n");
+      RmString++;
+    } else {
+      setUBit(instruction);
+    }
+    Rm = atoi(RmString + 1);
+    //last 4 bits of the offset are Rm
+    offset = Rm;
+    char* shiftType = strtok(NULL, " ");
+    //bits 5 and 6 are the shiftType
+    offset += (shiftID(shiftType)) << 5;
+    addressString = strtok(NULL, "");
+    addressString++;
+    addressString = removeSpaces(addressString);
+    char* amountString = malloc(sizeof(char) * (strlen(addressString) - 1));
+    strncpy(amountString, addressString, strlen(addressString) - 1);
+    int32_t amount = atoi(amountString);
+    free(amountString);
+    //the bits 11-7 of the offset are the amount
+    offset += amount << 7;
+  } else {
+    //it means it's only Rm with an ending ']'
+    if(*addressString == '-'){
+      addressString++;
+      //fprintf(stdout, "negative\n");
+    } else {
+      setUBit(instruction);
+    }
+    addressString = removeSpaces(addressString);
+    //jumping over the R
+    addressString++;
+    char* RmString = malloc(sizeof(char) * (strlen(addressString) - 1)); 
+    strncpy(RmString, addressString, strlen(addressString) - 1);
+    Rm = atoi(RmString);
+    free(RmString);
+    offset = Rm;
+  }
+(*instruction) += offset;
 }
 
 void registerInstruction(char* addressString, int32_t* instruction){
@@ -68,37 +169,34 @@ void registerInstruction(char* addressString, int32_t* instruction){
     char* RnString = malloc(sizeof(char) * count);
     strncpy(RnString, addressString, count);
     int32_t Rn = atoi(RnString);
-    //fprintf(stdout, "RnString: %s\n", RnString);
     free(RnString);
-    int32_t offset = 0;
+    setRnField(instruction, Rn);
     //skip Rn and the separator
     addressString += count;
-    //int32_t offset = 0;
+    /*char* RnString = strtok(addressString, separators);
+    addressString = strtok(NULL, "");
+    int32_t Rn = atoi(RnString);
+    setRnField(instruction, Rn);*/
+
     addressString = removeSpaces(addressString);
     if(*addressString == ']'){
       //pre-indexed register with offset 0 or post-indexed register
+      addressString += 1;
       addressString = removeSpaces(addressString);
-      if(*(addressString + 1) != ','){
+      if(*(addressString) != ','){
         //pre-indexed register with offset 0
-        setUBit(instruction);
-        offset = 0;
-        preIndexed(instruction);
+        baseRegisterOffsetZero(instruction);
       } else {
-        //post-indexed register
-        //fprintf(stdout, "got here 3\n");
-
-        while(!isdigit(*addressString) && (*addressString) != '-'){
-          addressString++;
-        }
-
-        if((*addressString) == '-'){
-          addressString++;
+        //post-indexed register - might be shifted or nonshifted
+        addressString += 1;
+        addressString = removeSpaces(addressString);
+        if((*addressString) == '#'){
+          postIndexingNonShiftedRegister(addressString, instruction);
         } else {
-          setUBit(instruction);
+          //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          strcat(addressString, "]");
+          shiftedRegister(addressString, instruction);
         }
-
-        offset = (int32_t) strtol(addressString, NULL, 0);
-        //fprintf(stdout, "offset: %d\n", offset);
       }
     } else {
       //pre-indexed register with offset != 0
@@ -106,72 +204,14 @@ void registerInstruction(char* addressString, int32_t* instruction){
       addressString++;
       addressString = removeSpaces(addressString);
       if(*addressString == '#'){
-      while(!isdigit(*addressString) && (*addressString) != '-'){
-          addressString++;
-        }
-
-        if((*addressString) == '-'){
-          addressString++;
-        } else {
-          setUBit(instruction);
-        }
-
-      //copy the content, without the last character (it is ']')
-      char* offsetString = malloc(sizeof(char) * (strlen(addressString) - 1));
-      strncpy(offsetString, addressString, strlen(addressString) - 1);
-      offset = (int32_t) strtol(offsetString, NULL, 0);
-      free(offsetString);
-      //fprintf(stdout, "lol offset: %d\n", offset);
-    } else {
-      setIBit(instruction);
-      int32_t Rm = 0;
-      if(strchr(addressString, ',')){
-        //it means the instruction contains a shift as well
-        char* RmString = strtok(addressString, ",");
-        RmString = removeSpaces(RmString);
-        if((*RmString) == '-'){
-          fprintf(stdout, "negative\n");
-          RmString++;
-        } else {
-          setUBit(instruction);
-        }
-        Rm = atoi(RmString + 1);
-        //last 4 bits of the offset are Rm
-        offset = Rm;
-        char* shiftType = strtok(NULL, " ");
-        //bits 5 and 6 are the shiftType
-        offset += (shiftID(shiftType)) << 5;
-        addressString = strtok(NULL, "");
-        addressString++;
-        addressString = removeSpaces(addressString);
-        char* amountString = malloc(sizeof(char) * (strlen(addressString) - 1));
-        strncpy(amountString, addressString, strlen(addressString) - 1);
-        int32_t amount = atoi(amountString);
-        //the bits 11-7 of the offset are the amount
-        offset += amount << 7;
-        //fprintf(stdout, "Rn: %d, Rm: %d, shiftType: %s, amount: %d\n", Rn, Rm, shiftType, amountString);
-        
+        //pre-indexed register without shift
+        preIndexingNonShiftedRegister(addressString, instruction);
       } else {
-        //it means it's only Rm with an ending ']'
-        if(*addressString == '-'){
-          addressString++;
-          //fprintf(stdout, "negative\n");
-        } else {
-          setUBit(instruction);
-        }
-        addressString = removeSpaces(addressString);
-        //jumping over the R
-        addressString++;
-        char* RmString = malloc(sizeof(char) * (strlen(addressString) - 1)); 
-        strncpy(RmString, addressString, strlen(addressString) - 1);
-        Rm = atoi(RmString);
-        offset = Rm;
-        // fprintf(stdout, "Rn: %d, Rm: %s",Rn,  RmString);
+      /*pre-indexed instruction using base register Rn and the contents
+      of Rm that can be shifted or not*/
+      shiftedRegister(addressString, instruction);
       }
     }
-    }
-    (*instruction) += Rn << 16;
-    (*instruction) += offset;
 }
 
 void decodeAddressSpecification(int32_t Rd, char* addressString, int32_t* instruction){
@@ -190,12 +230,6 @@ void decodeAddressSpecification(int32_t Rd, char* addressString, int32_t* instru
     /*if the first character is not =, then it is obviously [, so the function
     will check for the other keys & skip the chars [r -> += 2 */
     registerInstruction(addressString + 2, instruction);
-  }
-}
-
-void setLBit(int32_t *instruction, int id){
-  if(id - SDT_FUNCTION_OFFSET == 0){
-    (*instruction) += (((int32_t) 1) << 20);
   }
 }
 
