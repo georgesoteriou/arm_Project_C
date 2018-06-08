@@ -1,24 +1,7 @@
-/*
- * A simple libpng example program
- * http://zarb.org/~gc/html/libpng.html
- *
- * Modified by Yoshimasa Niwa to make it much simpler
- * and support all defined color_type.
- *
- * To build, use the next instruction on OS X.
- * $ brew install libpng
- * $ clang -lz -lpng15 libpng_test.c
- *
- * Copyright 2002-2010 Guillaume Cottenceau.
- *
- * This software may be freely redistributed under the terms
- * of the X11 license.
- *
- */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <png.h>
+#include <unistd.h>
 
 int width, height;
 png_byte color_type;
@@ -28,6 +11,7 @@ png_bytep *row_pointers;
 void read_png_file(char *filename) {
   FILE *fp = fopen(filename, "rb");
 
+  //system("echo hi");
   png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if(!png) abort();
 
@@ -83,13 +67,20 @@ void read_png_file(char *filename) {
 }
 
 void process_png_file() {
-  for(int y = 0; y < height; y++) {
+  for(int y = 50; y < height; y+=100) {
     png_bytep row = row_pointers[y];
-    for(int x = 0; x < width; x++) {
+    for(int x = 50; x < width; x+=100) {
       png_bytep px = &(row[x * 4]);
       // Do something awesome for each pixel here...
-      printf("%4d, %4d = RGBA(%3d, %3d, %3d, %3d)\n", x, y, px[0], px[1], px[2], px[3]);
+      if(px[0] < 100 && px[1] > 200 && px[2] < 100){
+        printf("0");
+      }else{
+        printf("1");
+      }
+        //printf("%4d, %4d = RGBA(%3d, %3d, %3d, %3d)\n", x, y, px[0], px[1], px[2], px[3]);
     }
+    printf("\n");
+    sleep(1);
   }
 }
 
