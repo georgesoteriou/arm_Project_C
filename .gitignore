@@ -18,6 +18,7 @@
 *.o
 emulate
 assemble
+extension
 
 #ignore junk files from compiling Haskell code
 *.hi
