@@ -4,24 +4,36 @@
 #include "Branch.h"
 #include "global.h"
 
+#define BIT_28 (1 << 28)
+#define BIT_29 (1 << 29)
+#define BIT_30 (1 << 30)
+#define BIT_31 (1 << 31)
+#define MASK_26 ((1 << 26) - 1)
+#define MASK_24 ((1 << 24) - 1)
+#define BRANCH_CONSTANT (1 << 27) + (1 << 25)
+
 uint32_t branchCondTable[] ={
-  0,                                    //beq
-  (1 << 28),                            //bne
-  (1 << 31) + (1 << 29),                //bge
-  (1 << 31) + (1 << 29) + (1 << 28),    //blt
-  (1 << 31) + (1 << 30),                //bgt 
-  (1 << 31) + (1 << 30) + (1 << 28),    //ble
-  (1 << 31) + (1 << 30) + (1 << 29)     //b                          
+  0,                           //beq
+  BIT_28,                      //bne
+  BIT_31 + BIT_29,             //bge
+  BIT_31 + BIT_29 + BIT_28,    //blt
+  BIT_31 + BIT_30,             //bgt 
+  BIT_31 + BIT_30 + BIT_28,    //ble
+  BIT_31 + BIT_30 + BIT_29     //b                          
 };
 
 uint32_t branch(int id, char* str){
   int32_t address = getAddress(str);
   if(address != -1){
-    int32_t offset = address - (currAddress + 8);
-    int32_t shiftedOffset = ((offset  & ((1 << 26) - 1)) >> 2) & ((1 << 24) - 1);
-    uint32_t branchconst = (1 << 27) + (1 << 25);
+    //get cond
     uint32_t cond = branchCondTable[id - BRANCH_FUNCTION_OFFSET];
-    return cond + branchconst + shiftedOffset;
+    //get offset
+    //8 is beacuse of PC offset due to pipeline
+    int32_t offset = address - (currAddress + 8);
+    //use offset to get shifted offset
+    int32_t shiftedOffset = ((offset & MASK_26) >> 2) & MASK_24;
+    
+    return cond + BRANCH_CONSTANT + shiftedOffset;
   }else{
     return -1;
   }
