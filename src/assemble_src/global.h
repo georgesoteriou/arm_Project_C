@@ -11,13 +11,6 @@ extern const int shiftStart;
 extern const int32_t condAlways;
 extern const int32_t wordLength;
 
-extern const int mulConst;
-extern const int mulConstStart;
-extern const int mulRd;
-extern const int mulRn;
-extern const int mulRs;
-extern const int aBit;
-
 
 uint32_t currAddress;
 uint32_t endOfInst;

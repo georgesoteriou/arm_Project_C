@@ -8,7 +8,7 @@
 #include "assemble_src/Multiply.h"
 #include "assemble_src/Single_Data_Transfer.h"
 #include "assemble_src/Branch.h"
-#include "assemble_src/special.h"
+#include "assemble_src/Special.h"
 
 #define BUFFER_SIZE 511
 

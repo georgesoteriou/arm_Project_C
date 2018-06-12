@@ -1,4 +1,4 @@
-#include "special.h"
+#include "Special.h"
 #include "global.h"
 #include <stdlib.h>
 #include <string.h>
