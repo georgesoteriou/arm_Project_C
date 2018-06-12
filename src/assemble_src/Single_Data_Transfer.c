@@ -71,7 +71,6 @@ void numericalConstant(int32_t Rd, char* addressString, int32_t* instruction){
     endOfInst += 4;
     (*instruction) += offset;
   }
-  //fprintf(stdout, "constant value: %d\n", address);
 }
 
 void baseRegisterOffsetZero(int32_t* instruction){
@@ -117,7 +116,6 @@ void shiftedRegister(char* addressString, int32_t* instruction){
     char* RmString = strtok(addressString, ",");
     RmString = removeSpaces(RmString);
     if((*RmString) == '-'){
-      //fprintf(stdout, "negative\n");
       RmString++;
     } else {
       setUBit(instruction);
@@ -141,7 +139,6 @@ void shiftedRegister(char* addressString, int32_t* instruction){
     //it means it's only Rm with an ending ']'
     if(*addressString == '-'){
       addressString++;
-      //fprintf(stdout, "negative\n");
     } else {
       setUBit(instruction);
     }
@@ -173,10 +170,6 @@ void registerInstruction(char* addressString, int32_t* instruction){
     setRnField(instruction, Rn);
     //skip Rn and the separator
     addressString += count;
-    /*char* RnString = strtok(addressString, separators);
-    addressString = strtok(NULL, "");
-    int32_t Rn = atoi(RnString);
-    setRnField(instruction, Rn);*/
 
     addressString = removeSpaces(addressString);
     if(*addressString == ']'){
@@ -254,8 +247,6 @@ uint32_t singleDataTransfer(int id, char* str){
   char* addressString = splitInstruction(&Rd, str);
 
   setRdField(&instruction, Rd);
-
-  //fprintf("Register value:%d, address:%s\n", Rd, addressString);
 
   addressString = removeSpaces(addressString);
   
