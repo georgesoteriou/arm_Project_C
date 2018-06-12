@@ -5,6 +5,19 @@
 #define BRANCH_FUNCTION_OFFSET 14
 #define SPECIAL_FUNCTION_OFFSET 21
 
+extern const int condStart;
+extern const int opcodeStart;
+extern const int32_t condAlways;
+extern const int32_t wordLength;
+
+extern const int mulConst;
+extern const int mulConstStart;
+extern const int mulRd;
+extern const int mulRn;
+extern const int mulRs;
+extern const int aBit;
+
+
 uint32_t currAddress;
 uint32_t endOfInst;
 

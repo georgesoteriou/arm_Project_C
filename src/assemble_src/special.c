@@ -20,10 +20,10 @@ uint32_t lsl(char* str){
   int32_t result = 0;
   
   //setting cond
-  result = ((int32_t) 14) << 28;
+  result = condAlways << condStart;
   
-  //setting opcode
-  result += (((int32_t) 13) << 21);
+  //setting opcode to 13, mov's opcode
+  result += (((int32_t) 13) << opcodeStart);
 
   //Remove Spaces
   while((*str) == ' '){
@@ -33,6 +33,8 @@ uint32_t lsl(char* str){
   //Getting rn and setting it as rd
   //and as shifted register
   char* r = strtok(str, ",");
+  //add 1 to rd and rn to get rid of 'r'
+  //shift to correct position
   int32_t rd = atoi(r + 1) << 12;
   int32_t rn = atoi(r + 1);
  
@@ -44,7 +46,7 @@ uint32_t lsl(char* str){
   char* constant = strtok(NULL, "\0");
   constant += 1;
   if(checkConstType(constant) == 0) {
-    num = (atoi(constant) & ((1 << 5) - 1)) << 7;
+    num = atoi(constant) << 7;
   } else {
     num = (strtol(constant, NULL, 16) & ((1 << 5) - 1)) << 7;
   }

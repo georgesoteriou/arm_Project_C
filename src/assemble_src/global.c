@@ -3,6 +3,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+const int condStart = 28;
+const int opcodeStart = 21;
+const int shiftStart = 5;
+
+const int32_t condAlways = 14;
+
+const int32_t wordLength = 32;
+
+//Multiply constants
+const int32_t mulConst = 9;
+const int mulConstStart = 4;
+const int mulRd = 16;
+const int mulRs = 8;
+const int mulRn = 12;
+const int aBit = 21;  
+
 char* removeSpaces(char *str) {
   //Remove Spaces
   while((*str) == ' '){
