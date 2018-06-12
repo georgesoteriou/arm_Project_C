@@ -7,6 +7,7 @@
 
 extern const int condStart;
 extern const int opcodeStart;
+extern const int shiftStart;
 extern const int32_t condAlways;
 extern const int32_t wordLength;
 

@@ -2,7 +2,20 @@
 #include "global.h"
 #include <string.h>
 #include <stdlib.h>
-uint32_t opcodeTable[10] = {4, 2, 3, 0, 1, 12, 13, 8, 9, 10};
+
+//there are 10 types of data processing instructions
+uint32_t opcodeTable[10] = {
+  4,    //opcode = 0100     hash = 0    
+  2,    //opcode = 0010     hash = 1                   
+  3,    //opcode = 0011     hash = 2     
+  0,    //opcode = 0000     hash = 3    
+  1,    //opcode = 0001     hash = 4      
+  12,   //opcode = 1100     hash = 5         
+  13,   //opcode = 1101     hash = 6      
+  8,    //opcode = 1000     hash = 7  
+  9,    //opcode = 1001     hash = 8  
+  10    //opcode = 1010     hash = 9   
+};
 
 //returns 1 for hex and 0 for binary
 int checkImmType(char* imm) {
@@ -18,18 +31,25 @@ int checkImmType(char* imm) {
 }
 
 int32_t rotateRight(int32_t value, int bits) {
-  return (value >> bits) | (value << (32 - bits));
+  return (value >> bits) | (value << (wordLength - bits));
 }
 
 int32_t rotateLeft(int32_t value, int bits) {
-  return (value << bits) | (value >> (32 - bits));
+  return (value << bits) | (value >> (wordLength - bits));
 }
 
 //returns 0 if decimal is not valid
+//the decimal is not valid if it cannot be
+//represented as an 8 bit rotated immediate
+//this means that by using an 8 bit mask and
+//rotating it, we should be able to find our 8 bit
+//rotated immediate.
+//If it is not found, the functions returns 0.
 int isValid(int32_t imm) {
   int32_t mask = (1 << 8) - 1;
   int count = 0;
-
+  
+  //only 15 possible rotations, 
   for(int i = 0; i < 15; i ++) {
     if((imm - (imm & mask)) == 0) {
       count++;
@@ -45,6 +65,7 @@ int isValid(int32_t imm) {
   }
 }
 
+//there are 4 possible shifts
 const char* shiftTable[4] = {"lsl", "lsr", "asr", "ror"};
 
 int shiftID(char* shift){
@@ -85,7 +106,7 @@ void processOperand(char* operand, int32_t* result) {
       //rotationNum now holds bits 8 - 11
       (*result) += (rotationNum << 8);
 
-      //constant has to be rotated to occupie the first
+      //constant has to be rotated to occupy the first
       //8 bits of result
       (*result) += rotateLeft(constant, 2 * rotationNum);  
     }
@@ -104,8 +125,8 @@ void processOperand(char* operand, int32_t* result) {
       //getting shift type
       char* shiftType = strtok(NULL, " ");
       shiftType = removeSpaces(shiftType);
-      int32_t shift = shiftID(shiftType); 
-      (*result) += (shift << 5);
+      int32_t shift = shiftID(shiftType);
+      (*result) += (shift << shiftStart);
 
       //getting shift ammount
       char* constant = strtok(NULL, "\0");
@@ -114,9 +135,9 @@ void processOperand(char* operand, int32_t* result) {
         //register is shifted by constant ammount
         int32_t num;
         if(checkImmType(constant + 1) == 0) {
-           num = (atoi(constant + 1) & ((1 << 5) - 2)) << 7;
+           num = (atoi(constant + 1)) << 7;
         } else {
-           num = ((strtol(constant + 3, NULL, 16)) & ((1 << 5) - 2)) << 7;
+           num = ((strtol(constant + 3, NULL, 16))) << 7;
         }
         (*result) += num;
       } else {
