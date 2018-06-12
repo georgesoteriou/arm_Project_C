@@ -1,7 +1,4 @@
 #include "global.h"
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
 
 const int condStart = 28;
 const int opcodeStart = 21;

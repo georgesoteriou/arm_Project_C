@@ -1,6 +1,5 @@
-#include <stdint.h>
 #include "Branch.h"
-#include "global.h"
+
 
 void branch(void){
   uint32_t *pc = &arm.registers[PC]; 

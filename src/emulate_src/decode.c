@@ -1,6 +1,3 @@
-#include <stdint.h>
-#include <stdio.h>
-#include "global.h"
 #include "decode.h"
 
 //------------COND FUNCTIONS-------------

@@ -1,8 +1,4 @@
 #include "Single_Data_Transfer.h"
-#include "global.h"
-#include "shift.h"
-#include <stdio.h>
-#include <stdint.h>
 
 void loadData(uint32_t src, uint32_t dest){
   arm.registers[dest] = getOffsetWord(src);

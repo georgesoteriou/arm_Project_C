@@ -1,4 +1,3 @@
-#include <stdint.h>
 #include "global.h"
 
 //17 resigers

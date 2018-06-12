@@ -1,11 +1,6 @@
 #include "Single_Data_Transfer.h"
 #include "Data_Processing.h"
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include "global.h"
-#include <ctype.h>
+
 
 //TO DO: CHECK IN SHIFTED REGISTERS IF THE FIRST ONE IS NEGATIVE FOR BOTH CASES
 //TO DO: REWRITE THE MALLOC THINGY WITH '\0' IN THE END

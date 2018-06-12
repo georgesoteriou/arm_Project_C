@@ -1,8 +1,3 @@
-#include <stdlib.h>
-#include <assert.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 #include "assemble_src/global.h"
 #include "assemble_src/Data_Processing.h"
 #include "assemble_src/Multiply.h"

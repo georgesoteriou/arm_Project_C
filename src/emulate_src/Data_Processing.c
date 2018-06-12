@@ -1,8 +1,5 @@
 #include "Data_Processing.h"
-#include "global.h"
-#include "shift.h"
-#include <stdint.h>
-#include <limits.h>
+
 
   void eor (int a, int b, int s, int rd) {
     int32_t result =  a ^ b;

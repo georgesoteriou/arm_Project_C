@@ -1,8 +1,4 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 #include "Branch.h"
-#include "global.h"
 
 #define BIT_28 (1 << 28)
 #define BIT_29 (1 << 29)

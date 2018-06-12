@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <assert.h>
-#include <stdint.h>
-#include <stdio.h>
 #include "emulate_src/global.h"
 #include "emulate_src/execute.h"
 #include "emulate_src/decode.h"

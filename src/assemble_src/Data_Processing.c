@@ -1,7 +1,4 @@
 #include "Data_Processing.h"
-#include "global.h"
-#include <string.h>
-#include <stdlib.h>
 
 //there are 10 types of data processing instructions
 uint32_t opcodeTable[10] = {

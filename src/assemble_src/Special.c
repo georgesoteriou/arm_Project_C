@@ -1,8 +1,4 @@
 #include "Special.h"
-#include "global.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
 
 int checkConstType(char* imm) {
   if(imm + 1 != '\0') {

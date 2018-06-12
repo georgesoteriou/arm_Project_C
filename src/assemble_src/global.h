@@ -1,4 +1,12 @@
+#ifndef GLOBAL_H
+#define GLOBAL_H
+
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <assert.h>
 
 #define MULTIPLY_FUNCTION_OFFSET 10
 #define SDT_FUNCTION_OFFSET 12
@@ -10,7 +18,6 @@ extern const int opcodeStart;
 extern const int shiftStart;
 extern const int32_t condAlways;
 extern const int32_t wordLength;
-
 
 uint32_t currAddress;
 uint32_t endOfInst;
@@ -50,3 +57,4 @@ void clearSymbolTable(void);
 
 
 
+#endif 

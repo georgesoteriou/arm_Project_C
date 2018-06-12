@@ -1,5 +1,3 @@
-#include <stdint.h>
-#include "global.h"
 #include "shift.h"
 
 void lsl(uint32_t* shiftee, uint32_t S_flag){

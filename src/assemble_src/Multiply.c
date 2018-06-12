@@ -1,9 +1,4 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "Multiply.h"
-#include "global.h"
 
 #define MUL_CONST (9 << 4)
 #define RD 16
