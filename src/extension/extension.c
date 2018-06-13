@@ -196,35 +196,14 @@ char* note_table[36] = {
 
 
 void process_png_file() {
-   /* for(int y = startY; y < startY + 100; y++ ) {
-      png_bytep row = row_pointers[y];
-      for(int x = startX; x < startX + 50; x++) {
-        png_bytep px = &(row[x * 4]);
-
-        if(px[0] == 187 && px[1] == 70 && px[2] == 226) {
-          printf("p");
-        } else if(px[0] == 255 && px[1] == 255 && px[2] == 255) {
-          printf("w");
-        } else if(px[0] == 0 && px[1] == 255 && px[2] == 0) {
-          printf("g");
-        } else if(px[0] == 255 && px[1] == 150 && px[2] == 0) {
-          printf("o");
-        } else if(px[0] == 0 && px[1] == 0 && px[2] == 0){
-          printf("b");
-        }
-      }
-
-      printf("\n");
-    }*/
-  
   findStart();
   findEnd();
 
   for(int y = startY+1; y <= endY; y++) {
     png_bytep row = row_pointers[y];
     
-    char* rowStr = calloc(sizeof(char), 235); 
-    strcat(rowStr, "play -q -n synth 1");
+    char* rowStr = calloc(sizeof(char), 237); 
+    strcat(rowStr, "play -q -n synth 0.3");
     
     int notes = 0;
     for(int x = startX; x <= endX; x++) {
@@ -248,12 +227,12 @@ void process_png_file() {
         }
       }
     }
-    if(strlen(rowStr) > 18) {
+    if(strlen(rowStr) > 20) {
       printf("%s\n", rowStr);
       system(rowStr);
-    }else{
-      sleep(1);
-    }
+     } else {
+      usleep((useconds_t) 300000);
+     }
     free(rowStr);
 
     png_bytep px = &(row[startX * 4]);

@@ -31,4 +31,4 @@ test:
 	ruby ../../arm11_1718_testsuite/testserver.rb .
 
 ext:
-	$(CC) $(CFLAGS) extension/extension.c -lpng -o extension/extension
+	$(CC)  extension/extension.c -std=c11 -g -lpng -o extension/extension
