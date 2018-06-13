@@ -67,20 +67,24 @@ void read_png_file(char *filename) {
 }
 
 void process_png_file() {
-  for(int y = 50; y < height; y+=100) {
+  printf("height: %i, width: %i\n", height, width);
+  for(int y = 10; y < height; y+=20) {
     png_bytep row = row_pointers[y];
-    for(int x = 50; x < width; x+=100) {
+    for(int x = 10; x < width; x+=20) {
       png_bytep px = &(row[x * 4]);
       // Do something awesome for each pixel here...
-      if(px[0] < 100 && px[1] > 200 && px[2] < 100){
-        printf("0");
-      }else{
+      // char* str = "";
+      if(px[0] > 40 && px[0] < 60 && px[1] > 100 && px[1] <150 && px[2] > 50 && px[2] < 100){
+	// strcat(str,"play -q -n synth 0.5 pluck ");
+	// strcat(str,
         printf("1");
+      }else{
+        printf("0");
       }
-        //printf("%4d, %4d = RGBA(%3d, %3d, %3d, %3d)\n", x, y, px[0], px[1], px[2], px[3]);
+        // printf("%4d, %4d = RGBA(%3d, %3d, %3d, %3d)\n", x, y, px[0], px[1], px[2], px[3]);
     }
     printf("\n");
-    sleep(1);
+    //sleep(1);
   }
 }
 
