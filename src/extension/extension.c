@@ -156,42 +156,42 @@ void findEnd() {
 }
 
 char* note_table[36] = {
-  "C3",
-  "C#3",
-  "D3",
-  "D#3",
-  "E3",
-  "F3",
-  "F#3",
-  "G3",
-  "G#3",
-  "A3",
-  "A#3",
-  "B3",
-  "C4",
-  "C#4",
-  "D4",
-  "D#4",
-  "E4",
-  "F4",
-  "F#4",
-  "G4",
-  "G#4",
-  "A4",
-  "A#4",
-  "B4",
-  "C5",
-  "C#5",
-  "D5",
-  "D#5",
-  "E5",
-  "F5",
-  "F#5",
-  "G5",
-  "G#5",
-  "A5",
-  "A#5",
-  "B5"
+  " pl C3",
+  " pl C#3",
+  " pl D3",
+  " pl D#3",
+  " pl E3",
+  " pl F3",
+  " pl F#3",
+  " pl G3",
+  " pl G#3",
+  " pl A3",
+  " pl A#3",
+  " pl B3",
+  " pl C4",
+  " pl C#4",
+  " pl D4",
+  " pl D#4",
+  " pl E4",
+  " pl F4",
+  " pl F#4",
+  " pl G4",
+  " pl G#4",
+  " pl A4",
+  " pl A#4",
+  " pl B4",
+  " pl C5",
+  " pl C#5",
+  " pl D5",
+  " pl D#5",
+  " pl E5",
+  " pl F5",
+  " pl F#5",
+  " pl G5",
+  " pl G#5",
+  " pl A5",
+  " pl A#5",
+  " pl B5"
 };
 
 
@@ -220,11 +220,11 @@ void process_png_file() {
   findStart();
   findEnd();
 
-  for(int y = startY; y <= endY; y++) {
+  for(int y = startY+1; y <= endY; y++) {
     png_bytep row = row_pointers[y];
     
     char* rowStr = calloc(sizeof(char), 235); 
-    rowStr = "play -q -n synth 1 ";
+    strcat(rowStr, "play -q -n synth 1");
     
     int notes = 0;
     for(int x = startX; x <= endX; x++) {
@@ -235,22 +235,40 @@ void process_png_file() {
         notes++;
         while(checkSEP(px) == 1) {
          x++;
+         px = &(row[x * 4]);
         }
       }
 
       if(checkNOTE(px) == 1) {
-        char* new = calloc(sizeof(char), 7);
-        new = " pl ";
-        strcat(new, note_table[notes]);
-        strcat(rowStr, new);
-             
+        strcat(rowStr, note_table[notes]);
+
         while(checkNOTE(px) == 1) {
          x++;
+         px = &(row[x * 4]);
         }
       }
     }
-    
-    printf("%s\n", rowStr);
+    if(strlen(rowStr) > 18) {
+      printf("%s\n", rowStr);
+      system(rowStr);
+    }else{
+      sleep(1);
+    }
+    free(rowStr);
+
+    png_bytep px = &(row[startX * 4]);
+
+    while(checkSEP(px) == 0 && checkBKG(px) == 0) {
+      y++;
+      png_bytep row = row_pointers[y];
+      px = &(row[startX * 4]);
+    }
+
+    while(checkSEP(px) == 1) {
+      y++;
+      png_bytep row = row_pointers[y];
+      px = &(row[startX * 4]);
+    }
   }
 }
 
