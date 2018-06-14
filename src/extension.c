@@ -231,7 +231,7 @@ void process_png_file() {
       printf("%s\n", rowStr);
       system(rowStr);
      } else {
-      usleep((useconds_t) 300000);
+      sleep(0.3);
      }
     free(rowStr);
 
