@@ -4,27 +4,28 @@
 
 \begin{document}
 
-\title{ARM Checkpoint... }
-\author{TODO}
+\title{ARM Checkpoint }
+\author{Group 10}
 
 \maketitle
 
+\section{Introduction} 
+This report provides a short analysis of our group work, the way we structured the tasks, the work done so far and how we are preparing for the second part of the project.
+
 \section{Group Organisation}
+We began the work on the project by reading and understanding the specifications and summarizing all the information on a team management platform, Trello, which allowed us to make notes ans set tasks. Afterwards, we split the tasks and started work while continuously keeping track of our progress and setting new goals.  \\ \par \noindent
+Since we were all beginners in C programming, we decided to work together in the early stages of our project. We designed the ARM data structure, followed by the implementation of the memory and the registers, the three stage pipeline, interpreting the structure of instructions and reading from files. \\ \par \noindent
+After implementing the core program and getting more familiar with C and with each other’s working behaviour, we decided each of us would program one of the four functions (Data Processing, Multiply, Single Data Transfer and Branch). Because some required more work than others (for example, the Multiply instruction was simpler), we tried to even out by pair coding when one was finished or taking up some parts that were necessary in the other person's code (for example, the computation of the Operand as an immediate value or as a register within Single Data Transfer, instead of Data Processing). \\ \par \noindent
+To improve the readability and correctness of our code, we proof-read each other's code, added significant comments and found new ways to implement functions more efficiently. This was the case especially when debugging the code, which was done by the whole team as it entails a high level of attention to detail and different perspectives and ideas are needed. \\ \par \noindent
+Pair coding has proven to be very effective, each of us coming up with new ways of writing the code in a more efficient way, or even discovering potential bugs/ typos as the code was written (such as bit masks errors or unnecessary pointer dereferencing). It also helped us to get to know each other even better and feel like a real team, not working only independently and then merging our solutions, but actually contributing to the whole project and learning from each other. \\ \par \noindent
+Independent coding was also useful for developing our C knowledge. We all became aware of our personal C programming skill and, at the same time, it was also beneficial to understand how tasks should be distributed in a team. It made us fully aware of the attributions of a group member, each person having the same responsibilities and importance. 
+\\
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
 
-\section{Implementation Strategies}
+\section{Implementation Strategies} 
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+We decided to structure the emulator by creating an ARM data structure, which contains the 17 registers as an array of 32-bit integers and the memory as an array of 64KB / 32 bit rows, making it 32-bit-addressable (since the instructions are 32-bit wide). It also contains the three-stage pipeline instructions: the fetched instruction, the decoded instruction and the currently executed one. \\ \par \noindent
+What we may find challenging for the next part is the symbol table, because it is supposed to be an abstract data type that we have not yet encountered in C, which we will try to solve by reading tutorials and the notes of the following weeks of our C Programming course. Furthermore, the only parts of the Emulator that we think are reusable for the Assembler are the global variables (masks, registers indices) and the way we read the file, most of the new instructions being different from what we have programmed so far. 
+
 
 \end{document}
