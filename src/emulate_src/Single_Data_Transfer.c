@@ -8,16 +8,20 @@ void writeData(uint32_t src, uint32_t dest){
   setOffsetWord(dest, arm.registers[src]);
 }
 
-void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
+// Calculates GPIO. returns 1 if it was gpio, 0 if not
+int gpio(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
   if(memAddr == 0x20200008){
     printf("One GPIO pin from 20 to 29 has been accessed\n");
     arm.registers[regAddr] = memAddr;
+    return 1;
   }else if(memAddr == 0x20200004){
     printf("One GPIO pin from 10 to 19 has been accessed\n");
     arm.registers[regAddr] = memAddr;
+    return 1;
   }else if(memAddr == 0x20200000){
     printf("One GPIO pin from 0 to 9 has been accessed\n");
     arm.registers[regAddr] = memAddr;
+    return 1;
   }else if(memAddr == 0x20200028){
     printf("PIN OFF\n");
     if(load_flag != 0) {
@@ -25,6 +29,7 @@ void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
     } else {
       gpioOff = arm.registers[regAddr];
     }
+    return 1;
   }else if(memAddr == 0x2020001c){
     printf("PIN ON\n");
     if(load_flag != 0) {
@@ -32,7 +37,15 @@ void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
     } else {
       gpioOn = arm.registers[regAddr];
     }
-  }else{
+    return 1;
+  }
+  return 0;
+}
+
+void transferData(uint32_t memAddr, uint32_t regAddr, uint32_t load_flag){
+  // check for GPIO
+  int isgpio = gpio(memAddr, regAddr, load_flag);
+  if(!isgpio){
     if(isWithinBounds(memAddr)) {
       if(load_flag != 0) {
         /*if the flag is set to load, then load the data from the source
