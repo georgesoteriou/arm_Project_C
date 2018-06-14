@@ -1,21 +1,12 @@
 #include "Single_Data_Transfer.h"
 #include "Data_Processing.h"
 
-
-//TO DO: CHECK IN SHIFTED REGISTERS IF THE FIRST ONE IS NEGATIVE FOR BOTH CASES
-//TO DO: REWRITE THE MALLOC THINGY WITH '\0' IN THE END
-//TO DO: MAKE A FUNCTION FOR CHECK NEGATIVE
-//TO DO: REMOVE NASTY ']' FOR THE SECOND CASE
-//TO DO: SEE THE SEPARATORS THING AND MAKE IT WITH STRTOK
-//TO DO: MAKE FUNCTION FOR SPLITTING THE TEXT
-//TO DO: GET RID OF MAGIC NUMBERS, REFACTOR EVEN MORE IF POSSIBLE
-
 void setRdField(int32_t *instruction, int32_t Rd){
   (*instruction) += Rd << 12;
 }
 
 void setCond(int32_t* instruction){
-  (*instruction) += ((uint32_t) 14 << 28);
+  (*instruction) += ((uint32_t) condAlways << condStart);
 }
 
 void setUBit(int32_t* instruction){
@@ -50,14 +41,31 @@ int32_t SDTmov(int32_t Rd, int32_t address){
   return instruction;
 }
 
-void numericalConstant(int32_t Rd, char* addressString, int32_t* instruction){
+char* findExpressionAndSetUFlag(char* addressString, int32_t* instruction){
+  /* this function checks only the cases when the register is shifted by
+  <#expression> and basically checks if the expression is positive. If it is,
+  then it sets the U flag. It also returns the value of the expression*/
+  while(!isdigit(*addressString) && (*addressString) != '-'){
+    addressString += 1;
+  }
+  if((*addressString) == '-'){
+    addressString += 1;
+  } else {
+    setUBit(instruction);
+  }
+  return addressString;
+}
 
-  int32_t address = (int32_t) strtol(addressString, NULL, 0);
-  if(address < 255){
-    *instruction =  SDTmov(Rd, address);
+void numericalConstant(int32_t Rd, char* addressString, int32_t* instruction){
+  addressString = findExpressionAndSetUFlag(addressString, instruction);
+  int32_t expression = (int32_t) strtol(addressString, NULL, 0);
+  if(expression < 255){
+    //less than 0xFF, which is 255 in decimal -> execute normal mov function
+    *instruction =  SDTmov(Rd, expression);
     setRdField(instruction, Rd);
   } else {
-    addData(address);
+    //copy the expression at the end of the instructions
+    addData(expression);
     int32_t Rn = 15;
     (*instruction) += (Rn << 16);
     int32_t offset = 0;
@@ -74,32 +82,16 @@ void baseRegisterOffsetZero(int32_t* instruction){
 }
 
 void postIndexingNonShiftedRegister(char* addressString, int32_t* instruction){
-  while(!isdigit(*addressString) && (*addressString) != '-'){
-    addressString++;
-  }
-  if((*addressString) == '-'){
-    addressString++;
-  } else {
-    setUBit(instruction);
-  }
-  int32_t offset = (int32_t) strtol(addressString, NULL, 0);
+  char* expression = findExpressionAndSetUFlag(addressString, instruction);
+  int32_t offset = (int32_t) strtol(expression, NULL, 0);
   (*instruction) += offset;
 }
 
 void preIndexingNonShiftedRegister(char* addressString, int32_t* instruction){
-  while(!isdigit(*addressString) && (*addressString) != '-'){
-    addressString++;
-  }
-  if((*addressString) == '-'){
-    addressString++;
-  } else {
-    setUBit(instruction);
-  }
-   //copy the content, without the last character (it is ']')
-  char* offsetString = malloc(sizeof(char) * (strlen(addressString) - 1));
-  strncpy(offsetString, addressString, strlen(addressString) - 1);
-  int32_t offset = (int32_t) strtol(offsetString, NULL, 0);
-  free(offsetString);
+  char* expression = findExpressionAndSetUFlag(addressString, instruction);
+   //removing the last character, which we know that is ']'
+  *(expression + strlen(expression) - 1) = '\0';
+  int32_t offset = (int32_t) strtol(expression, NULL, 0);
   (*instruction) += offset;
 }
 
@@ -107,43 +99,24 @@ void shiftedRegister(char* addressString, int32_t* instruction){
   setIBit(instruction);
   int32_t Rm = 0, offset = 0;
   if(strchr(addressString, ',')){
-    //it means the instruction contains a shift as well
+    //it means the instruction contains a <shift> as well, not only the Rm
     char* RmString = strtok(addressString, ",");
-    RmString = removeSpaces(RmString);
-    if((*RmString) == '-'){
-      RmString++;
-    } else {
-      setUBit(instruction);
-    }
-    Rm = atoi(RmString + 1);
-    //last 4 bits of the offset are Rm
+    RmString = findExpressionAndSetUFlag(addressString, instruction);
+    Rm = atoi(RmString);
     offset = Rm;
+
     char* shiftType = strtok(NULL, " ");
-    //bits 5 and 6 are the shiftType
-    offset += (shiftID(shiftType)) << 5;
+    offset += (shiftID(shiftType)) << shiftStart;
+
     addressString = strtok(NULL, "");
-    addressString++;
+    addressString += 1;
     addressString = removeSpaces(addressString);
-    char* amountString = malloc(sizeof(char) * (strlen(addressString) - 1));
-    strncpy(amountString, addressString, strlen(addressString) - 1);
-    int32_t amount = atoi(amountString);
-    free(amountString);
-    //the bits 11-7 of the offset are the amount
+    int32_t amount = atoi(addressString);
     offset += amount << 7;
   } else {
     //it means it's only Rm with an ending ']'
-    if(*addressString == '-'){
-      addressString++;
-    } else {
-      setUBit(instruction);
-    }
-    addressString = removeSpaces(addressString);
-    //jumping over the R
-    addressString++;
-    char* RmString = malloc(sizeof(char) * (strlen(addressString) - 1)); 
-    strncpy(RmString, addressString, strlen(addressString) - 1);
+    char* RmString = findExpressionAndSetUFlag(addressString, instruction);
     Rm = atoi(RmString);
-    free(RmString);
     offset = Rm;
   }
 (*instruction) += offset;
@@ -165,8 +138,8 @@ void registerInstruction(char* addressString, int32_t* instruction){
     setRnField(instruction, Rn);
     //skip Rn and the separator
     addressString += count;
-
     addressString = removeSpaces(addressString);
+
     if(*addressString == ']'){
       //pre-indexed register with offset 0 or post-indexed register
       addressString += 1;
@@ -181,15 +154,13 @@ void registerInstruction(char* addressString, int32_t* instruction){
         if((*addressString) == '#'){
           postIndexingNonShiftedRegister(addressString, instruction);
         } else {
-          //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          strcat(addressString, "]");
           shiftedRegister(addressString, instruction);
         }
       }
     } else {
       //pre-indexed register with offset != 0
       preIndexed(instruction);
-      addressString++;
+      addressString += 1;
       addressString = removeSpaces(addressString);
       if(*addressString == '#'){
         //pre-indexed register without shift
@@ -197,6 +168,7 @@ void registerInstruction(char* addressString, int32_t* instruction){
       } else {
       /*pre-indexed instruction using base register Rn and the contents
       of Rm that can be shifted or not*/
+      *(addressString + strlen(addressString) - 1) = '\0';
       shiftedRegister(addressString, instruction);
       }
     }
@@ -204,29 +176,13 @@ void registerInstruction(char* addressString, int32_t* instruction){
 
 void decodeAddressSpecification(int32_t Rd, char* addressString, int32_t* instruction){
   if(*addressString == '='){
-    /*numeric constant, so ignore the first character and convert from
-    a hex string to int*/
     preIndexed(instruction);
-    if(*(addressString + 1) == '-'){
-      addressString += 2;
-    } else {
-      setUBit(instruction);
-      addressString += 1;
-    }
     numericalConstant(Rd, addressString, instruction);
   } else {
     /*if the first character is not =, then it is obviously [, so the function
     will check for the other keys & skip the chars [r -> += 2 */
     registerInstruction(addressString + 2, instruction);
   }
-}
-
-char* splitInstruction(int32_t *Rd, char* str){
-  /*splitting the instruction before a comma, taking the second character
-  (the first one will always be r, because it has the format r_digit) and
-  then converting it to int to get the register index*/
-  *Rd = atoi((strtok(str, ",")) + 1);
-  return strtok(NULL, "");
 }
 
 uint32_t singleDataTransfer(int id, char* str){
@@ -237,16 +193,17 @@ uint32_t singleDataTransfer(int id, char* str){
   set01bits(&instruction);
   setLBit(&instruction, id);
 
-  int32_t Rd = 0;
-
-  char* addressString = splitInstruction(&Rd, str);
+  /*splitting the instruction before a comma, taking the second character
+  (the first one will always be r, because it has the format r_digit) and
+  then converting it to int to get the register index*/
+  int32_t Rd = atoi((strtok(str, ",")) + 1);
+  char* addressString = strtok(NULL, "");
 
   setRdField(&instruction, Rd);
 
   addressString = removeSpaces(addressString);
-  
-  decodeAddressSpecification(Rd, addressString, &instruction);  
+
+  decodeAddressSpecification(Rd, addressString, &instruction);
 
   return instruction;
 }
-
