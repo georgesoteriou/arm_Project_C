@@ -22,9 +22,7 @@ uint32_t lsl(char* str){
   result += (((int32_t) 13) << opcodeStart);
 
   //Remove Spaces
-  while((*str) == ' '){
-    str++;
-  }
+  removeSpaces(str);
   
   //Getting rn and setting it as rd
   //and as shifted register
