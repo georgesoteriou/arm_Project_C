@@ -83,78 +83,6 @@ void read_png_file(char *filename) {
 
 }
 
-//check if pixel is background color
-int checkBKG(png_bytep px) {
-  if(px[0] == BKG_R &&
-    px[1] == BKG_G && 
-    px[2] == BKG_B) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-int checkBlack(png_bytep px) {
-  if(px[0] == 0 && px[1] == 0 && px[2] == 0) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-//ceck if fixel is background color
-int checkSEP(png_bytep px) {
-  if(px[0] == SEP_R &&
-    px[1] == SEP_G && 
-    px[2] == SEP_B ) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-
-//ceck if fixel is background color
-int checkNOTE(png_bytep px) {
-  if(px[0] >= NOTE_R - 2 && px[0] <= NOTE_R &&
-    px[1] >= NOTE_G - 2 && px[1] <= NOTE_G + 2 && 
-    px[2] >= NOTE_B && px[2] <= NOTE_B + 2) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-//find start of notes
-void findStart() {
-  for(int y = 0; y < height; y++) {
-    png_bytep row = row_pointers[y];
-    for(int x = 0; x < width; x++) {
-      png_bytep px = &(row[x * 4]);
-      if(checkBKG(px) == 0 && checkBlack(px) == 0) { 
-       startX = x;
-       startY = y;
-       return;
-      }
-    }
-  }
-}
-
-//find the end of notes
-void findEnd() {
-  for(int y = height - 1; y >= 0; y--) {
-    png_bytep row = row_pointers[y];
-    for(int x = width - 1; x >= 0; x--) {
-      png_bytep px = &(row[x * 4]);
-      if(checkBKG(px) == 0  && checkBlack(px) == 0) {
-        endX = x;
-        endY = y;
-        return;
-      }
-    }
-  }
-}
-
 char* note_table[36] = {
   " pl C3",
   " pl C#3",
@@ -194,59 +122,65 @@ char* note_table[36] = {
   " pl B5"
 };
 
+#define START_X 234
+#define START_Y 38
+#define NOTE_SIZE_X 80
+#define NOTE_SIZE_Y 40
+#define SPACE_SIZE_X 10
+#define SPACE_SIZE_Y 7 
+#define NOTES 36
+#define TIMES 50
+#define COLOR_R 247
+#define WHITE_R 255
+#define DURATION 0.15
+
+char* result;
+
+void addNote(int note, double timeout, double duration) {
+  // play -n -q synth "DURATION" pl C4 delay "TIMEOUT" | play -n -q synth 1 pl E4 delay 0
+
+  char t[10], d[10];
+  snprintf(t, 10, "%f", timeout);
+  snprintf(d, 10, "%f", duration);
+  char *toAdd = calloc(sizeof(char), 50);
+  strcat(toAdd, "play -n -q synth ");
+  strcat(toAdd, d);
+  strcat(toAdd, note_table[note]);
+  strcat(toAdd, " delay ");
+  strcat(toAdd, t);
+  strcat(toAdd, " | ");
+  result = realloc(result, strlen(result) + strlen(toAdd) + 1);
+  strcat(result, toAdd);
+  free(toAdd);
+}
+
 
 void process_png_file() {
-  findStart();
-  findEnd();
-
-  for(int y = startY+1; y <= endY; y++) {
-    png_bytep row = row_pointers[y];
-    
-    char* rowStr = calloc(sizeof(char), 237); 
-    strcat(rowStr, "play -q -n synth 0.3");
-    
-    int notes = 0;
-    for(int x = startX; x <= endX; x++) {
-      png_bytep px = &(row[x * 4]);
-      //gets rid of green
-      //and increases the notes counter
-      if(checkSEP(px) == 1) {
-        notes++;
-        while(checkSEP(px) == 1) {
-         x++;
-         px = &(row[x * 4]);
-        }
+  int duration = 0;
+  int note = 0;
+  for(int x = START_X; x <= (NOTES-1) * (NOTE_SIZE_X + SPACE_SIZE_X) + START_X ; x+= (NOTE_SIZE_X + SPACE_SIZE_X) , note++) {
+    int timeout = 0;
+    for(int y = START_Y; y <= (TIMES-1) * (NOTE_SIZE_Y + SPACE_SIZE_Y) + START_Y; y+= (NOTE_SIZE_Y + SPACE_SIZE_Y)) {
+      png_bytep topLeftpx = &(row_pointers[y][x*4]);
+      png_bytep midLeftpx = &(row_pointers[y+(NOTE_SIZE_Y/2)][x*4]);
+      if(topLeftpx[0] == COLOR_R && midLeftpx[0] == COLOR_R){
+        duration+= 2;
+      }else if(topLeftpx[0] == COLOR_R && midLeftpx[0] == WHITE_R){
+        duration++;
+        //CREATE NEW NOTE
+        //printf("new note with duration: %lf, Timeout: %lf\n", duration * DURATION, (timeout - duration + 1) * DURATION);
+        addNote(note, ((timeout - duration + 1) * DURATION), duration * DURATION);
+        duration = 0;
+      }else if(topLeftpx[0] == WHITE_R && duration != 0){
+        //CREATE NEW NOTE
+        //printf("new note with duration: %lf, Timeout: %lf\n", duration * DURATION, (timeout - duration) * DURATION);
+        addNote(note, ((timeout - duration) * DURATION), duration * DURATION);
+        duration = 0;
       }
-
-      if(checkNOTE(px) == 1) {
-        strcat(rowStr, note_table[notes]);
-
-        while(checkNOTE(px) == 1) {
-         x++;
-         px = &(row[x * 4]);
-        }
+      if(midLeftpx[0] == COLOR_R && topLeftpx[0] != COLOR_R){
+        duration++;
       }
-    }
-    if(strlen(rowStr) > 20) {
-      printf("%s\n", rowStr);
-      system(rowStr);
-     } else {
-      sleep(0.3);
-     }
-    free(rowStr);
-
-    png_bytep px = &(row[startX * 4]);
-
-    while(checkSEP(px) == 0 && checkBKG(px) == 0) {
-      y++;
-      png_bytep row = row_pointers[y];
-      px = &(row[startX * 4]);
-    }
-
-    while(checkSEP(px) == 1) {
-      y++;
-      png_bytep row = row_pointers[y];
-      px = &(row[startX * 4]);
+      timeout+=2;
     }
   }
 }
@@ -255,8 +189,17 @@ void process_png_file() {
 int main(int argc, char *argv[]) {
   if(argc != 2) abort();
 
+  result = calloc(sizeof(char), 1);
+
   read_png_file(argv[1]);
   process_png_file();
+
+  result[strlen(result) -2] = '\0';
+  
+  system(result);
+
+  //printf("%s\n", result);
+  free(result);
 
   return 0;
 }
