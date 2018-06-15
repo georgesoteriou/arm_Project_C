@@ -23,7 +23,7 @@ clean:
 	rm -f assemble
 	rm -f emulate
 	rm -f out
-	rm -f extension/extension
+	rm -f extension
 
 test:
 	make
@@ -31,4 +31,4 @@ test:
 	ruby ../../arm11_1718_testsuite/testserver.rb .
 
 ext:
-	$(CC) $(CFLAGS) extension/extension.c -lpng -o extension/extension
+	$(CC)  extension.c -std=c11 -g -lpng -o extension
