@@ -10,7 +10,7 @@
 typedef uint32_t (*Mnemonic)(int, char*);
 
 const char* mnemonics[23] = {
-  "add","sub","rsb","and","eor","orr","mov","tst","teq","cmp","mul","mla","ldr","str","beq","bne","bge","blt","bgt","ble","b","lsl","andeq"
+  "add", "sub", "rsb", "and", "eor", "orr", "mov", "tst", "teq", "cmp", "mul", "mla", "ldr", "str", "beq", "bne", "bge", "blt", "bgt", "ble", "b", "lsl", "andeq"
 };
 
 int mnemonicID(char* mnemonic){
@@ -37,17 +37,17 @@ Mnemonic mnemonicFunc(int id) {
 }
 
 void firstPass(const char* readFile){
-  char buffer[ BUFFER_SIZE ];
+  char buffer[ BUFFER_SIZE];
   //read from file
-  FILE* input_file = fopen( readFile, "r" );
-  char* label;
+  FILE *input_file = fopen( readFile, "r");
+  char *label;
 
   if(input_file == NULL){
-    printf("Unable to open file %s\n", readFile );
+    printf("Unable to open file %s\n", readFile);
   }else{
     // Read each line into the buffer
     int currAddress = 0;
-    char* line = fgets(buffer, BUFFER_SIZE, input_file);
+    char *line = fgets(buffer, BUFFER_SIZE, input_file);
     while(line != NULL ){
       label = strtok(buffer, "\n");
       if(label != NULL && label[strlen(label) - 1] == ':'){
@@ -59,7 +59,7 @@ void firstPass(const char* readFile){
       line = fgets(buffer, BUFFER_SIZE, input_file);
     }
     if(ferror(input_file) ){
-      perror( "The following error occurred" );
+      perror("The following error occurred");
     }
     endOfInst = currAddress;
     fclose(input_file);
@@ -70,34 +70,34 @@ void secondPass(const char* readFile,const char* writeFile){
   //initData();
   char buffer[ BUFFER_SIZE ];
   //read from file
-  FILE* input_file = fopen(readFile, "r" );
+  FILE* input_file = fopen(readFile, "r");
   FILE* write_file = fopen(writeFile, "wb");
   char* mnemonic;
   char* line;
 
   if(input_file == NULL){
-    printf("Unable to open file %s\n", readFile );
+    printf("Unable to open file %s\n", readFile);
   }else{
     currAddress = 0;
     // Read each line into the buffer
-    while(fgets(buffer, BUFFER_SIZE, input_file) != NULL ){
+    while(fgets(buffer, BUFFER_SIZE, input_file) != NULL){
       mnemonic = strtok(buffer, " ");
-      line = strtok(NULL, "\n" );
+      line = strtok(NULL, "\n");
       //If not a label
       if(mnemonic[strlen(mnemonic) - 1] != '\n'){
         int id = mnemonicID(mnemonic);
         uint32_t result = mnemonicFunc(id)(id, line);
         //Write binary to output file
-        fwrite(&result,sizeof(result),1,write_file);
+        fwrite(&result, sizeof(result), 1, write_file);
         currAddress += 4;
       }
     }
     if(ferror(input_file) ){
-      perror( "The following error occurred" );
+      perror("The following error occurred");
       exit(-1);
     }
     if(ferror(write_file) ){
-      perror( "The following error occurred" );
+      perror("The following error occurred");
       exit(-1);
     }
     
@@ -105,7 +105,7 @@ void secondPass(const char* readFile,const char* writeFile){
     //Print LDR extra data after 0 command
     uint32_t data = getData();
     while(data != 0){
-      fwrite(&data,sizeof(data),1,write_file);
+      fwrite(&data, sizeof(data), 1, write_file);
       data = getData();
     }
 

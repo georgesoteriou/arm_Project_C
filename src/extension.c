@@ -74,8 +74,16 @@ void read_png_file(char *filename) {
   png_read_update_info(png, info);
 
   row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
+  if(row_pointers == NULL){
+    fprintf(stdout, "Not enough memory");
+    return;
+  }
   for(int y = 0; y < height; y++) {
     row_pointers[y] = (png_byte*)malloc(png_get_rowbytes(png,info));
+    if(row_pointers[y] == NULL){
+      fprintf(stdout, "Not enough memory");
+      return;
+    }
   }
 
   png_read_image(png, row_pointers);
@@ -202,7 +210,11 @@ void process_png_file() {
   for(int y = startY+1; y <= endY; y++) {
     png_bytep row = row_pointers[y];
     
-    char* rowStr = calloc(sizeof(char), 237); 
+    char *rowStr = calloc(sizeof(char), 237); 
+    if(rowStr == NULL){
+      fprintf(stdout, "Not enough memory");
+      return;
+    }
     strcat(rowStr, "play -q -n synth 0.3");
     
     int notes = 0;

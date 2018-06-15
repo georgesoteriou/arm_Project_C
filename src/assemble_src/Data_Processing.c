@@ -15,7 +15,7 @@ uint32_t opcodeTable[10] = {
 };
 
 //returns 1 for hex and 0 for binary
-int checkImmType(char* imm) {
+int checkImmType(char *imm) {
   if(imm + 1 != '\0') {
     if((*imm) == '0' && (*(imm + 1)) == 'x') {
       return 1;
@@ -63,9 +63,9 @@ int isValid(int32_t imm) {
 }
 
 //there are 4 possible shifts
-const char* shiftTable[4] = {"lsl", "lsr", "asr", "ror"};
+const char *shiftTable[4] = {"lsl", "lsr", "asr", "ror"};
 
-int shiftID(char* shift){
+int shiftID(char *shift){
   for(int i = 0; i < 4; i++){
     if (strcmp(shiftTable[i], shift) == 0) {
       return i;  
@@ -74,12 +74,12 @@ int shiftID(char* shift){
   exit(-1);
 }
 
-void processOperand(char* operand, int32_t* result) {
+void processOperand(char *operand, int32_t *result) {
   if((*operand) == '#') {
     //the opperand is an immediate value;
     //set I bit
     (*result) += (((int32_t) 1) << 25);
-    char* imm = operand + 1;
+    char *imm = operand + 1;
 
     int32_t constant;
     
@@ -111,22 +111,22 @@ void processOperand(char* operand, int32_t* result) {
     //the operand is a register
     operand++;
 
-    char* checkComma = strchr(operand, ',');
+    char *checkComma = strchr(operand, ',');
     if(checkComma == NULL) {
       (*result) += (int32_t) atoi(operand);
     } else {
-      char* r = strtok(operand, ",");
+      char *r = strtok(operand, ",");
       r = removeSpaces(r);
       (*result) += (int32_t) atoi(r);
       
       //getting shift type
-      char* shiftType = strtok(NULL, " ");
+      char *shiftType = strtok(NULL, " ");
       shiftType = removeSpaces(shiftType);
       int32_t shift = shiftID(shiftType);
       (*result) += (shift << shiftStart);
 
       //getting shift ammount
-      char* constant = strtok(NULL, "\0");
+      char *constant = strtok(NULL, "\0");
       constant = removeSpaces(constant);
       if((*constant) == '#') {
         //register is shifted by constant ammount
@@ -149,117 +149,117 @@ void processOperand(char* operand, int32_t* result) {
   }
 }
 
-int32_t getRd(char* rd){
+int32_t getRd(char *rd){
   //getting rid of 'r' from string
   rd += 1;
   //shift rd value to position in result
   return (((int32_t) atoi(rd)) << 12);
 }
 
-int32_t getRn(char* rn){
+int32_t getRn(char *rn){
   //getting rid of 'r' from string
   rn += 1; 
   //shift rn value to position in result
   return (((int32_t) atoi(rn)) << 16);
 }
 
-int32_t get3parameters(char* str){
+int32_t get3parameters(char *str){
   int32_t result = 0;
   //getting rd from the first argument;
-  char* rd = strtok(str, ",");
+  char *rd = strtok(str, ",");
   rd = removeSpaces(rd);
   result += getRd(rd);
 
   //getting rn from the second argument;
-  char* rn = strtok(NULL, ",");
+  char *rn = strtok(NULL, ",");
   rn = removeSpaces(rn);
   result += getRn(rn);
   
   //getting operand from the third argument;
-  char* operand = strtok(NULL, "\0");
+  char *operand = strtok(NULL, "\0");
   operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
 
-int32_t add(char* str){
+int32_t add(char *str){
   return get3parameters(str);
 }
 
-int32_t sub(char* str){
+int32_t sub(char *str){
   return get3parameters(str);
 }
 
-int32_t rsb(char* str){
+int32_t rsb(char *str){
   return get3parameters(str);
 }
 
-int32_t and(char* str){
+int32_t and(char *str){
   return get3parameters(str);
 }
 
-int32_t eor(char* str){
+int32_t eor(char *str){
   return get3parameters(str);
 }
 
-int32_t orr(char* str){
+int32_t orr(char *str){
   return get3parameters(str);
 }
 
-int32_t mov(char* str){
+int32_t mov(char *str){
   int32_t result = 0;
   //getting rd from the first argument;
-  char* rd = strtok(str, ",");
+  char *rd = strtok(str, ",");
   rd = removeSpaces(rd);
   result += getRd(rd);
 
   //get operand
-  char* operand = strtok(NULL, "\0");
+  char *operand = strtok(NULL, "\0");
   operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
 
-int32_t tst(char* str){
+int32_t tst(char *str){
   int32_t result = 0;
   //set bit 20
   result += (1 << 20);
 
-  char* rn = strtok(str, ",");
+  char *rn = strtok(str, ",");
   rn = removeSpaces(rn);
   result += getRn(rn);
   
-  char* operand = strtok(NULL, "\0");
+  char *operand = strtok(NULL, "\0");
   operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
 
-int32_t teq(char* str){
+int32_t teq(char *str){
   int32_t result = 0;
   //set bit 20
   result += (1 << 20);
 
-  char* rn = strtok(str, ",");
+  char *rn = strtok(str, ",");
   rn = removeSpaces(rn);
   result += getRn(rn);
   
-  char* operand = strtok(NULL, "\0");
+  char *operand = strtok(NULL, "\0");
   operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
 }
 
-int32_t cmp(char* str){
+int32_t cmp(char *str){
   int32_t result = 0;
   //set bit 20
   result += (1 << 20);
 
-  char* rn = strtok(str, ",");
+  char *rn = strtok(str, ",");
   rn = removeSpaces(rn);
   result += getRn(rn);
   
-  char* operand = strtok(NULL, "\0");
+  char *operand = strtok(NULL, "\0");
   operand = removeSpaces(operand);
   processOperand(operand, &result);
   return result;
@@ -281,7 +281,7 @@ const data_f data_fTable[10] = {
 };
 
 
-uint32_t dataProcessing(int hash, char* str){
+uint32_t dataProcessing(int hash, char *str){
   int32_t result = 0;
   str = removeSpaces(str);
   //setting cond

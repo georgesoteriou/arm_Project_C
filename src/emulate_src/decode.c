@@ -3,22 +3,22 @@
 //------------COND FUNCTIONS-------------
 //Functions to check cond
 int eq(uint32_t n, uint32_t z, uint32_t v) {
-  return ( (z != 0) ? 1 : 0 );
+  return ((z != 0) ? 1 : 0);
 }
 int ne(uint32_t n, uint32_t z, uint32_t v) {
-  return ( (z == 0) ? 1 : 0 );
+  return ((z == 0) ? 1 : 0);
 }
 int ge(uint32_t n, uint32_t z, uint32_t v ) {
-  return ( (n == v) ? 1 : 0 );
+  return ((n == v) ? 1 : 0);
 }
 int lt(uint32_t n, uint32_t z, uint32_t v) {
-  return ( (n != v) ? 1 : 0 );
+  return ((n != v) ? 1 : 0);
 }
 int gt(uint32_t n, uint32_t z, uint32_t v) {
-  return (((z == 0) && (n == v)) ? 1 : 0 );
+  return (((z == 0) && (n == v)) ? 1 : 0);
 }
 int le(uint32_t n, uint32_t z, uint32_t v) {
-  return (((z != 0) || (n != v)) ? 1 : 0 );
+  return (((z != 0) || (n != v)) ? 1 : 0);
 }
 int al(uint32_t n, uint32_t z, uint32_t v) {
   return 1;

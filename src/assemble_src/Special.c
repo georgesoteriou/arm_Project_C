@@ -1,6 +1,6 @@
 #include "Special.h"
 
-int checkConstType(char* imm) {
+int checkConstType(char *imm) {
   if(imm + 1 != '\0') {
     if((*imm) == '0' && (*(imm + 1)) == 'x') {
       return 1;
@@ -12,7 +12,7 @@ int checkConstType(char* imm) {
   }
 }
 
-uint32_t lsl(char* str){
+uint32_t lsl(char *str){
   int32_t result = 0;
   
   //setting cond
@@ -26,7 +26,7 @@ uint32_t lsl(char* str){
   
   //Getting rn and setting it as rd
   //and as shifted register
-  char* r = strtok(str, ",");
+  char *r = strtok(str, ",");
   //add 1 to rd and rn to get rid of 'r'
   //shift to correct position
   int32_t rd = atoi(r + 1) << 12;
@@ -37,7 +37,7 @@ uint32_t lsl(char* str){
 
   //getting shitft ammount
   int32_t num = 0;
-  char* constant = strtok(NULL, "\0");
+  char *constant = strtok(NULL, "\0");
   constant += 1;
   if(checkConstType(constant) == 0) {
     num = atoi(constant) << 7;
@@ -50,16 +50,16 @@ uint32_t lsl(char* str){
   return result; 
 }
 
-uint32_t andeq(char* str){
+uint32_t andeq(char *str){
   return 0;
 }
 
-typedef uint32_t (*Special_f)(char* str);
+typedef uint32_t (*Special_f)(char *str);
 
 static Special_f special_fTable[] ={
   lsl , andeq
 };
 
-uint32_t special(int hash, char* str){
+uint32_t special(int hash, char *str){
   return special_fTable[hash - SPECIAL_FUNCTION_OFFSET](str);
 }

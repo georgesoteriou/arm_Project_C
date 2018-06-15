@@ -22,12 +22,12 @@ extern const int32_t wordLength;
 uint32_t currAddress;
 uint32_t endOfInst;
 
-char* removeSpaces(char*);
+char *removeSpaces(char*);
 
 //LDR LINKED LIST
 struct LDRNode{
   uint32_t data;
-  struct LDRNode* next;
+  struct LDRNode *next;
 };
 
 void initLDRTable(void);
@@ -41,9 +41,9 @@ void clearLDRTable(void);
 
 //SYMBOL LINKED LIST
 struct SymbolNode{
-  char* label;
+  char *label;
   uint32_t address;
-  struct SymbolNode* next;
+  struct SymbolNode *next;
 };
 
 void initSymbolTable(void);

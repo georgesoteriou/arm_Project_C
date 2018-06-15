@@ -6,7 +6,7 @@
 #define RN 12
 #define A_BIT (1 << 21)
 
-uint32_t multiply(int hash, char* str){
+uint32_t multiply(int hash, char *str){
     //set the constants, cond and the 1001 field
     uint32_t result = (condAlways << condStart) + MUL_CONST; 
     
