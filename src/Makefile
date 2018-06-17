@@ -23,12 +23,8 @@ clean:
 	rm -f assemble
 	rm -f emulate
 	rm -f out
-	rm -f extension
 
 test:
 	make
 	@echo "Make sure arm11_1718_testsuite is cloned in the same directory as arm11_TEAMNUMBER"
 	ruby ../../arm11_1718_testsuite/testserver.rb .
-
-ext:
-	$(CC) $(CFLAGS) extension.c -g -lpng -o extension

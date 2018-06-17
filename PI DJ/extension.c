@@ -4,17 +4,6 @@
 #include <unistd.h>
 #include <string.h>
 
-#define BKG_R 187
-#define BKG_G 70
-#define BKG_B 226
-
-#define SEP_R 0
-#define SEP_G 255
-#define SEP_B 0
-
-#define NOTE_R 255
-#define NOTE_G 150
-#define NOTE_B 0
 
 int width, height;
 int startX, startY;
@@ -132,7 +121,7 @@ char* note_table[36] = {
 #define TIMES 50
 #define COLOR_R 247
 #define WHITE_R 255
-#define DURATION 0.15
+#define DURATION 0.2
 
 char* result;
 
@@ -143,7 +132,7 @@ void addNote(int note, double timeout, double duration) {
   snprintf(t, 10, "%f", timeout);
   snprintf(d, 10, "%f", duration);
   char *toAdd = calloc(sizeof(char), 50);
-  strcat(toAdd, "play -n -q synth ");
+  strcat(toAdd, "play -q -n synth ");
   strcat(toAdd, d);
   strcat(toAdd, note_table[note]);
   strcat(toAdd, " delay ");
@@ -198,7 +187,7 @@ int main(int argc, char *argv[]) {
   
   system(result);
 
-  //printf("%s\n", result);
+  printf("%s\n", result);
   free(result);
 
   return 0;
