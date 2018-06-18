@@ -123,23 +123,23 @@ char* note_table[36] = {
 #define WHITE_B 255
 #define DURATION 0.2
 
-char* result;
-
 void addNote(int note, double timeout, double duration) {
   // play -n -q synth "DURATION" pl C4 delay "TIMEOUT" | play -n -q synth 1 pl E4 delay 0
 
   char t[10], d[10];
   snprintf(t, 10, "%f", timeout);
   snprintf(d, 10, "%f", duration);
-  char *toAdd = calloc(sizeof(char), 50);
-  strcat(toAdd, "play -q -n synth ");
+  char *toAdd = calloc(sizeof(char), 70);
+  strcat(toAdd, "sox -n result-temp.wav synth ");
   strcat(toAdd, d);
   strcat(toAdd, note_table[note]);
   strcat(toAdd, " delay ");
   strcat(toAdd, t);
-  strcat(toAdd, " | ");
-  result = realloc(result, strlen(result) + strlen(toAdd) + 1);
-  strcat(result, toAdd);
+
+  system(toAdd);
+
+  system("sox -M result-temp.wav result.wav result.wav");
+
   free(toAdd);
 }
 
@@ -178,17 +178,13 @@ void process_png_file() {
 int main(int argc, char *argv[]) {
   if(argc != 2) abort();
 
-  result = calloc(sizeof(char), 1);
+  system("rec result.wav trim 0 0");
 
   read_png_file(argv[1]);
   process_png_file();
 
-  result[strlen(result) -2] = '\0';
-  
-  system(result);
-
-  printf("%s\n", result);
-  free(result);
+  system("play result.wav");
+  //printf("%s\n", result);
 
   return 0;
 }
