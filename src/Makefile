@@ -28,4 +28,3 @@ test:
 	make
 	@echo "Make sure arm11_1718_testsuite is cloned in the same directory as arm11_TEAMNUMBER"
 	ruby ../../arm11_1718_testsuite/testserver.rb .
-
