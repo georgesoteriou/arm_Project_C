@@ -18,7 +18,7 @@ uint32_t branchCondTable[] ={
   BIT_31 + BIT_30 + BIT_29     //b                          
 };
 
-uint32_t branch(int id, char* str){
+uint32_t branch(int id, char *str){
   int32_t address = getAddress(str);
   if(address != -1){
     //get cond
@@ -30,7 +30,7 @@ uint32_t branch(int id, char* str){
     int32_t shiftedOffset = ((offset & MASK_26) >> 2) & MASK_24;
     
     return cond + BRANCH_CONSTANT + shiftedOffset;
-  }else{
+  } else{
     return -1;
   }
 }

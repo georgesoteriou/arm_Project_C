@@ -73,10 +73,10 @@ void singleDataTransfer(void){
 
   uint32_t instr = arm.executeCommand;
   uint32_t offset = selectBits(instr, sdtOffsetLength, 0);
-  uint32_t immediate_flag   = selectBit(instr, iBit);
+  uint32_t immediate_flag = selectBit(instr, iBit);
   uint32_t preindexing_flag = selectBit(instr, pBit);
-  uint32_t up_bit_flag   = selectBit(instr, uBit);
-  uint32_t load_flag     = selectBit(instr, lBit);
+  uint32_t up_bit_flag = selectBit(instr, uBit);
+  uint32_t load_flag = selectBit(instr, lBit);
   uint32_t Rd = selectBits(instr, regAddrLength, sdtOffsetLength);
   uint32_t Rn = selectBits(instr, regAddrLength, sdtOffsetLength + regAddrLength);
   uint32_t *Rn_address = &arm.registers[Rn];

@@ -122,7 +122,7 @@ void setOffsetWord(uint32_t address, uint32_t data){
 }
 
 int32_t isWithinBounds(int32_t memAddr){
-  return memAddr >= 0 && memAddr < memorySize;
+  return (memAddr >= 0) && (memAddr < memorySize);
 }
 
 
