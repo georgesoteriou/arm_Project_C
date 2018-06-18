@@ -121,30 +121,49 @@ char* note_table[36] = {
 #define TIMES 50
 #define COLOR_B 118
 #define WHITE_B 255
-#define DURATION 0.2
+#define DURATION 0.1
 
-void addNote(int note, double timeout, double duration) {
+
+void addNote(int note, double timeout, double duration, char* outfile) {
   // play -n -q synth "DURATION" pl C4 delay "TIMEOUT" | play -n -q synth 1 pl E4 delay 0
-
-  char t[10], d[10];
+  char t[10], d[10], totalD[10];
   snprintf(t, 10, "%f", timeout);
   snprintf(d, 10, "%f", duration);
-  char *toAdd = calloc(sizeof(char), 70);
+  snprintf(totalD, 10, "%f", DURATION * 100);
+  char *toAdd = calloc(sizeof(char), 100);
+ 
   strcat(toAdd, "sox -n result-temp.wav synth ");
   strcat(toAdd, d);
   strcat(toAdd, note_table[note]);
   strcat(toAdd, " delay ");
   strcat(toAdd, t);
-
+                                                          
+  // printf("%s\n", toAdd);
+  // create new note
   system(toAdd);
-
-  system("sox -M result-temp.wav result.wav result.wav");
-
   free(toAdd);
+
+  char *result = calloc(sizeof(char), 100);
+  strcat(result, "sox -V0 -m -v 1 ");
+  strcat(result, outfile);
+  strcat(result, " -v 1 result-temp.wav out.wav trim 0 ");
+  strcat(result, totalD);
+  // create mix of files
+  system(result);
+  free(result);
+  
+  char* moveOutput = calloc(sizeof(char), 100);
+  strcat(moveOutput, "mv out.wav ");
+  strcat(moveOutput, outfile);
+  // move outfile
+  system(moveOutput);
+  free(moveOutput);
+
+  system("rm result-temp.wav");
 }
 
 
-void process_png_file() {
+void process_png_file(char *outfile) {
   int duration = 0;
   int note = 0;
   for(int x = START_X; x <= (NOTES-1) * (NOTE_SIZE_X + SPACE_SIZE_X) + START_X ; x+= (NOTE_SIZE_X + SPACE_SIZE_X) , note++) {
@@ -158,12 +177,12 @@ void process_png_file() {
         duration++;
         //CREATE NEW NOTE
         //printf("new note with duration: %lf, Timeout: %lf\n", duration * DURATION, (timeout - duration + 1) * DURATION);
-        addNote(note, ((timeout - duration + 1) * DURATION), duration * DURATION);
+        addNote(note, ((timeout - duration + 1) * DURATION), duration * DURATION, outfile);
         duration = 0;
       }else if(topLeftpx[2] == WHITE_B && duration != 0){
         //CREATE NEW NOTE
         //printf("new note with duration: %lf, Timeout: %lf\n", duration * DURATION, (timeout - duration) * DURATION);
-        addNote(note, ((timeout - duration) * DURATION), duration * DURATION);
+        addNote(note, ((timeout - duration) * DURATION), duration * DURATION, outfile);
         duration = 0;
       }
       if(midLeftpx[2] == COLOR_B && topLeftpx[2] != COLOR_B){
@@ -176,15 +195,36 @@ void process_png_file() {
 
 
 int main(int argc, char *argv[]) {
-  if(argc != 2) abort();
+  if(argc != 3) abort();
 
-  system("rec result.wav trim 0 0");
+  char totalD[10];  
+  snprintf(totalD, 10, "%f", DURATION * 100);
+
+  char *result = calloc(sizeof(char), 100); 
+  strcat(result, "sox -n ");
+  strcat(result, argv[2]);
+  strcat(result, " trim 0 ");
+  strcat(result, totalD);
+  // Create result file
+  system(result);
+  free(result);
 
   read_png_file(argv[1]);
-  process_png_file();
+  process_png_file(argv[2]);
+  
+  char *play = calloc(sizeof(char), 100); 
+  strcat(play, "play ");
+  strcat(play, argv[2]);
+  // play outfile
+  system(play); 
+  free(play);  
 
-  system("play result.wav");
-  //printf("%s\n", result);
+//printf("%s\n", result);
+
+  for(int y = 0; y < height; y++) {
+    free(row_pointers[y]);
+  }
+  free(row_pointers);
 
   return 0;
 }
