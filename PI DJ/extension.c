@@ -119,8 +119,8 @@ char* note_table[36] = {
 #define SPACE_SIZE_Y 7 
 #define NOTES 36
 #define TIMES 50
-#define COLOR_R 247
-#define WHITE_R 255
+#define COLOR_B 118
+#define WHITE_B 255
 #define DURATION 0.2
 
 char* result;
@@ -152,21 +152,21 @@ void process_png_file() {
     for(int y = START_Y; y <= (TIMES-1) * (NOTE_SIZE_Y + SPACE_SIZE_Y) + START_Y; y+= (NOTE_SIZE_Y + SPACE_SIZE_Y)) {
       png_bytep topLeftpx = &(row_pointers[y][x*4]);
       png_bytep midLeftpx = &(row_pointers[y+(NOTE_SIZE_Y/2)][x*4]);
-      if(topLeftpx[0] == COLOR_R && midLeftpx[0] == COLOR_R){
+      if(topLeftpx[2] == COLOR_B && midLeftpx[2] == COLOR_B){
         duration+= 2;
-      }else if(topLeftpx[0] == COLOR_R && midLeftpx[0] == WHITE_R){
+      }else if(topLeftpx[2] == COLOR_B && midLeftpx[2] == WHITE_B){
         duration++;
         //CREATE NEW NOTE
         //printf("new note with duration: %lf, Timeout: %lf\n", duration * DURATION, (timeout - duration + 1) * DURATION);
         addNote(note, ((timeout - duration + 1) * DURATION), duration * DURATION);
         duration = 0;
-      }else if(topLeftpx[0] == WHITE_R && duration != 0){
+      }else if(topLeftpx[2] == WHITE_B && duration != 0){
         //CREATE NEW NOTE
         //printf("new note with duration: %lf, Timeout: %lf\n", duration * DURATION, (timeout - duration) * DURATION);
         addNote(note, ((timeout - duration) * DURATION), duration * DURATION);
         duration = 0;
       }
-      if(midLeftpx[0] == COLOR_R && topLeftpx[0] != COLOR_R){
+      if(midLeftpx[2] == COLOR_B && topLeftpx[2] != COLOR_B){
         duration++;
       }
       timeout+=2;
