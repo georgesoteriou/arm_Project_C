@@ -197,17 +197,23 @@ void process_png_file(char *outfile) {
 int main(int argc, char *argv[]) {
   if(argc != 3) abort();
 
-  char totalD[10];  
-  snprintf(totalD, 10, "%f", DURATION * 100);
+  FILE * file;
+  file = fopen(argv[2], "r");
+  if(!file){
+    char totalD[10];  
+    snprintf(totalD, 10, "%f", DURATION * 100);
 
-  char *result = calloc(sizeof(char), 100); 
-  strcat(result, "sox -n ");
-  strcat(result, argv[2]);
-  strcat(result, " trim 0 ");
-  strcat(result, totalD);
-  // Create result file
-  system(result);
-  free(result);
+    char *result = calloc(sizeof(char), 100); 
+    strcat(result, "sox -n ");
+    strcat(result, argv[2]);
+    strcat(result, " trim 0 ");
+    strcat(result, totalD);
+    // Create result file
+    system(result);
+    free(result);
+  }else{
+    fclose(file);
+  }
 
   read_png_file(argv[1]);
   process_png_file(argv[2]);
