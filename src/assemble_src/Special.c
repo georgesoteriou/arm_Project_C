@@ -1,7 +1,7 @@
 #include "Special.h"
 
 int checkConstType(char *imm) {
-  if(imm + 1 != '\0') {
+  if(*(imm + 1) != '\0') {
     if((*imm) == '0' && (*(imm + 1)) == 'x') {
       return 1;
     } else {

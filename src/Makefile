@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS  = -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -D_DEFAULT_SOURCE -std=c99 -Werror -pedantic
+CFLAGS  = -Wall -D_POSIX_SOURCE -D_BSD_SOURCE -D_DEFAULT_SOURCE -std=c99 
 
 ASSEMBLE_SOURCES = assemble.c $(wildcard assemble_src/*.c)
 ASSEMBLE_OBJECTS = assemble.o $(ASSEMBLE_SOURCES:.c=.o)

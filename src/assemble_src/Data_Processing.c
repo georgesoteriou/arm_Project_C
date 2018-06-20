@@ -16,7 +16,7 @@ uint32_t opcodeTable[10] = {
 
 //returns 1 for hex and 0 for binary
 int checkImmType(char *imm) {
-  if(imm + 1 != '\0') {
+  if(*(imm + 1) != '\0') {
     if((*imm) == '0' && (*(imm + 1)) == 'x') {
       return 1;
     } else {
